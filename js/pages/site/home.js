@@ -3,44 +3,79 @@
  * a character, what it's for, what's available now vs coming soon, how to contact us.
  */
 import { disposer } from '../../core/dom.js';
-import { t, tl } from '../../i18n/index.js';
+import { t, tl, pick } from '../../i18n/index.js';
 import { icon } from '../../ui/icons.js';
 import { revealOnScroll } from '../../ui/reveal.js';
-import { hydrateCharacterMedia } from '../../ui/character-media.js';
+import { characterMedia, hydrateCharacterMedia } from '../../ui/character-media.js';
 import { BUSINESS } from '../../config/business.js';
 import { findListing } from '../../data/catalog.js';
-import { btn, sectionHead, availabilityBadge, packageCards, talentStrip, slaText } from './shared.js';
+import { btn, sectionHead, availabilityBadge, packageCards, slaText } from './shared.js';
 
 const OFFER_ICONS = { realistic: 'smile', ready: 'grid', custom: 'brief', avatar: 'image', agent: 'sparkle', campaign: 'megaphone', integration: 'code' };
 const WAY_LINKS = { marketplace: '#/marketplace', custom: '#/brief', ai: '#/ai-generation' };
 const WAY_STATUS = { marketplace: BUSINESS.offerings.marketplace, custom: BUSINESS.offerings.custom, ai: BUSINESS.offerings.aiGeneration };
 const WAY_ICONS = { marketplace: 'grid', custom: 'brief', ai: 'sparkle' };
 
+/* Hero cast: verified portraits only (see catalog `media`). Centre card is the focal point;
+   outer cards are hidden on tablet/mobile, so the middle three stay balanced on every screen. */
+const HERO_CAST = ['karim', 'lina', 'adam', 'reem', 'faisal'];
+const FOCAL = 2;
+/* Hero service strip — existing offer copy + real availability from BUSINESS (no new claims). */
+const HERO_SERVICES = [
+  { id: 'ready', status: BUSINESS.offerings.marketplace },
+  { id: 'custom', status: BUSINESS.offerings.custom },
+  { id: 'integration', status: 'on-request' }, // scoped per project, quoted by the team
+];
+
+const heroCast = () => HERO_CAST.map(findListing).filter(Boolean);
+
+function heroStage(offer) {
+  const cast = heroCast();
+  return `
+    <div class="hero-stage" data-reveal="1">
+      <div class="hero-stage__cast">
+        ${cast.map((l, i) => `
+          <figure class="cast-card cast-card--${i} ${i === FOCAL ? 'is-focal' : ''}">
+            ${characterMedia(l, { size: 'hero', label: i === FOCAL, priority: i === FOCAL })}
+            <figcaption class="cast-card__cap"><strong>${pick(l.name)}</strong><span>${pick(l.title)}</span></figcaption>
+          </figure>`).join('')}
+      </div>
+      <ul class="hero-stage__services" role="list">
+        ${HERO_SERVICES.map(({ id, status }) => {
+          const item = offer.find((o) => o.id === id);
+          return item ? `
+          <li class="hero-service">
+            <span class="hero-service__icon">${icon(OFFER_ICONS[id])}</span>
+            <span class="hero-service__title">${item.title}</span>
+            ${availabilityBadge(status)}
+          </li>` : '';
+        }).join('')}
+      </ul>
+    </div>`;
+}
+
 export default {
   render() {
-    const hero = ['faisal', 'reem', 'karim'].map(findListing);
     const offer = tl('home.offer.items');
     const ways = tl('home.ways.items');
     const process = tl('home.process.items');
 
     return `
       <!-- Hero -->
-      <section class="site-section hero-b" aria-labelledby="hero-title">
-        <div class="container hero-b__grid">
-          <div class="hero-b__copy" data-reveal>
-            <p class="eyebrow">${t('home.hero.eyebrow')}</p>
+      <section class="site-section hero-b hero-c" aria-labelledby="hero-title">
+        <div class="container hero-c__inner">
+          <div class="hero-c__copy" data-reveal>
+            <p class="eyebrow hero-c__eyebrow"><span class="hero-c__dot" aria-hidden="true"></span>${t('home.hero.eyebrow')}</p>
             <h1 id="hero-title" class="hero-b__title">${t('home.hero.title')}</h1>
             <p class="hero-b__lead">${t('home.hero.description')}</p>
             <div class="hero-b__actions">
-              ${btn(t('cta.exploreCharacters'), '#/marketplace', 'primary')}
+              <a class="btn btn--primary btn--lg" href="#/marketplace"><span>${t('cta.exploreCharacters')}</span>${icon('arrowRight', { className: 'flip-rtl btn__arrow' })}</a>
               ${btn(t('cta.createCustom'), '#/brief', 'secondary')}
             </div>
             <a class="link-arrow" href="#/contact">${t('cta.talkToTeam')} ${icon('arrowRight', { className: 'flip-rtl' })}</a>
           </div>
-          <figure class="hero-talent" data-reveal="1">
-            ${talentStrip(hero)}
-            <figcaption class="hero-talent__note">${icon('info', { size: 14 })} ${t('home.hero.visualNote')}</figcaption>
-          </figure>
+          ${heroStage(offer)}
+          ${heroCast().some((l) => !l.media?.image) ? `<p class="hero-talent__note hero-c__note">${icon('info', { size: 14 })} ${t('home.hero.visualNote')}</p>` : ''}
         </div>
       </section>
 
@@ -122,7 +157,7 @@ export default {
         <div class="container">
           ${sectionHead(t('home.packages.title'), t('home.packages.intro'), 'pkg-title')}
           ${packageCards({ compact: true })}
-          <div class="center-cta"><a class="btn btn--secondary" href="#/packages">${t('cta.viewPackages')}</a></div>
+          <div class="center-cta">${btn(t('cta.viewPackages'), '#/packages', 'secondary')}</div>
         </div>
       </section>
 
@@ -180,7 +215,7 @@ export default {
           <div class="hero-b__actions">
             ${btn(t('cta.createCustom'), '#/brief', 'primary')}
             ${btn(t('cta.requestIntegration'), '#/request-integration', 'secondary')}
-            ${btn(t('cta.talkToTeam'), '#/contact', 'ghost')}
+            ${btn(t('cta.talkToTeam'), '#/contact', 'tertiary')}
           </div>
         </div>
       </section>`;

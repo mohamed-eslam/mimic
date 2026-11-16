@@ -36,7 +36,7 @@
     border-color var(--dur-fast) var(--ease-out);
 }
 .btn:hover { transform: translateY(-1px); }
-.btn:active { transform: translateY(2px); box-shadow: 0 1px 0 0 var(--btn-border); }
+.btn:active { transform: translateY(1px); box-shadow: none; }
 .btn:focus-visible { box-shadow: var(--btn-shadow), var(--shadow-focus); }
 .btn:disabled, .btn[aria-disabled="true"] { opacity: 0.5; transform: none; pointer-events: none; }
 .btn .icon { --icon-size: 18px; }
@@ -45,10 +45,29 @@
   --btn-bg: var(--color-primary);
   --btn-fg: var(--color-primary-contrast);
   --btn-border: var(--color-primary);
-  --btn-shadow: 0 3px 0 0 var(--indigo-950);
+  --btn-shadow: 0 2px 0 0 var(--color-primary-active), var(--shadow-xs);
 }
-.btn--primary:hover { --btn-bg: var(--color-primary-hover); }
-.btn--primary:active { box-shadow: 0 1px 0 0 var(--indigo-950); }
+.btn--primary:hover { --btn-bg: var(--color-primary-hover); --btn-border: var(--color-primary-hover); }
+.btn--primary:active { --btn-bg: var(--color-primary-active); --btn-border: var(--color-primary-active); }
+
+/* Secondary — outlined, neutral ink: clearly an action, clearly below primary */
+.btn--secondary { --btn-bg: var(--color-surface); --btn-fg: var(--color-text); --btn-shadow: none; }
+.btn--secondary:hover { --btn-bg: var(--color-surface-muted); --btn-border: var(--color-text-muted); }
+.btn--secondary:active { --btn-bg: var(--color-surface-sunken); }
+
+/* Tertiary — text action in brand green, same height as buttons so rows align */
+.btn--tertiary {
+  --btn-bg: transparent;
+  --btn-fg: var(--color-primary);
+  --btn-border: transparent;
+  --btn-shadow: none;
+  --btn-px: var(--space-4);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.3em;
+}
+.btn--tertiary:hover { --btn-bg: var(--color-accent-softer); --btn-fg: var(--color-primary-hover); text-decoration-thickness: 2px; }
+.btn--tertiary:hover, .btn--tertiary:active { transform: none; }
 
 .btn--accent {
   --btn-bg: var(--color-accent);
@@ -74,8 +93,9 @@
 .btn--ghost:hover { --btn-bg: var(--color-surface-muted); }
 
 .btn--sm { --btn-h: var(--control-h-sm); --btn-px: var(--space-4); font-size: var(--text-xs); }
-.btn--lg { --btn-h: var(--control-h-lg); --btn-px: var(--space-7); font-size: var(--text-base); }
-.btn--lg .icon { --icon-size: 20px; }
+.btn--lg { --btn-h: var(--control-h-lg); --btn-px: var(--space-6); font-size: var(--text-base); }
+.btn--lg.btn--tertiary { --btn-px: var(--space-4); }
+.btn--lg .icon { --icon-size: 18px; }
 .btn--block { width: 100%; }
 .btn--icon { --btn-px: 0; width: var(--btn-h); }
 

@@ -24,7 +24,12 @@
   font-size: var(--text-sm);
   font-weight: var(--weight-bold);
   color: var(--color-accent);
+  text-underline-offset: 0.3em;
 }
+a.link-arrow:hover, a:hover > .link-arrow { text-decoration: underline; }
+a.link-arrow:focus-visible { border-radius: var(--radius-xs); }
+/* Hero tertiary link sits on its own line under the button row */
+.hero-b__copy > .link-arrow { min-height: var(--control-h-sm); }
 .link-arrow .icon { --icon-size: 16px; transition: translate var(--dur-base) var(--ease-spring); }
 a:hover > .link-arrow .icon, .link-arrow:hover .icon { translate: calc(4px * var(--dir)) 0; }
 

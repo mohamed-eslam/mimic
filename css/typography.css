@@ -26,12 +26,13 @@ body { font-size: var(--fs-body); line-height: var(--lh-body); }
 }
 /* Card titles */
 .way-card__title, .audience-card__title, .package-card__title, .talent-card__name, .int-option h2,
-.card__title, .use-card__title, .contact-option h2, .uses-col h3, .avail__col h3, .int-band .int-path h3 {
+.card__title, .use-card__title, .contact-option h2, .uses-col h3, .avail__col h3, .int-band .int-path h3,
+.offer-item h3, .step-b__title {
   font-size: var(--fs-h3);
   line-height: var(--lh-h3);
 }
 /* Small card titles */
-.offer-item h3, .step-b__title, .int-area h3, .service-line h3, .wz-review__section h3,
+.int-area h3, .service-line h3, .wz-review__section h3,
 .soon__planned h2, .brief-preview__title, .wz-result h3, .finder__q legend, .talent-detail__paths-title {
   font-size: var(--fs-h4);
   line-height: var(--lh-h3);
@@ -53,9 +54,10 @@ body { font-size: var(--fs-body); line-height: var(--lh-body); }
 
 /* ---------- Interface text ---------- */
 .site-nav__link, .app-nav__link, .drawer-nav__link, .site-footer__link,
-.btn, .input, .select, .textarea, .wz-option__label, .pref-btn, .link-arrow {
+.btn, .wz-option__label, .pref-btn, .link-arrow {
   font-size: var(--fs-ui);
 }
+.input, .select, .textarea { font-size: var(--fs-input); }
 .btn { line-height: var(--lh-ui); }
 .btn--sm, .pref-btn { font-size: var(--fs-label); }
 .site-footer__link, .site-footer__brand p { line-height: var(--lh-lead); }
@@ -85,10 +87,18 @@ body { font-size: var(--fs-body); line-height: var(--lh-body); }
 .wizard-head { gap: var(--space-3); }
 .way-card, .audience-card, .package-card, .int-option { gap: var(--space-3); }
 
+/* Display tracking eased to match the smaller scale */
+.hero-b__title, .final-cta__title { letter-spacing: var(--tracking-tight); }
+.final-cta__title { max-width: 24ch; }
+.section-head { margin-block-end: var(--space-8); }
+@media (max-width: 719px) { .section-head { margin-block-end: var(--space-6); } }
+
 /* ---------- Arabic refinements ---------- */
 :lang(ar) .eyebrow { font-size: var(--fs-label); font-weight: var(--weight-semibold); }
 :lang(ar) .hero-b__title, :lang(ar) .page-hero__title, :lang(ar) .section-head__title { font-weight: var(--weight-bold); }
 :lang(ar) .btn { font-weight: var(--weight-semibold); }
+/* Wrapped Arabic headings: never clip ascenders/descenders */
+:lang(ar) .hero-b__title, :lang(ar) .section-head__title, :lang(ar) .final-cta__title { overflow: visible; padding-block: 0.05em; }
 
 /* Narrow cards: name and badge stack instead of overflowing */
 .talent-card__head { flex-wrap: wrap; row-gap: var(--space-1); }
