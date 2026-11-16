@@ -51,7 +51,14 @@ filenames and are referenced explicitly via `media: photo('<file>')` in `js/data
 | Salma | `magnific_she-should-look_1lpDovir4r.png` |
 | Nour | — not supplied (light-blue blouse portrait expected) |
 
-Unmatched (kept, not used): `…he-should-look-mostly-human_UPmtud7wny.png`, `…premium-photorealistic-nearhuman_bxT0XgK5Y2.png`,
-`…original-premium-abstract-3d-brand-mascot_gOI8u6FSXO.png`, `…premium-stylized-3d-egyptian-female_lJ8oCSfgv9.png`,
-`…premium-stylized-3d-egyptian-male-character_LwBXvCuswO.png`.
+Showcase-only (homepage product scenes, NOT marketplace listings — see `js/data/showcase.js`):
+
+| Character | File |
+| --- | --- |
+| Milo (stylized 3D, in-app assistant) | `magnific_premium-stylized-3d-egyptian-male-character_LwBXvCuswO.png` |
+| Nova (near-human, digital presenter) | `magnific_premium-photorealistic-nearhuman_bxT0XgK5Y2.png` |
+
+Unmatched (kept, not used): `…he-should-look-mostly-human_UPmtud7wny.png`, 
+`…original-premium-abstract-3d-brand-mascot_gOI8u6FSXO.png`, `…premium-stylized-3d-egyptian-female_lJ8oCSfgv9.png`.
+
 `license.txt` files are still missing for every character.

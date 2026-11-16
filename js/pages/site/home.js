@@ -1,229 +1,179 @@
 /**
- * Marketing homepage — answers: who it's for, what customers get, how they get
- * a character, what it's for, what's available now vs coming soon, how to contact us.
+ * Marketing homepage — five sections, visual-first:
+ *   01 Hero · 02 What we offer · 03 Available now / coming soon
+ *   04 Characters in action (scroll story) · 05 Character showcase + final CTA
+ *
+ * Inner pages, catalog data and older homepage copy are untouched; the homepage
+ * simply no longer renders the earlier sections (audiences, ways, packages, uses…).
  */
 import { disposer } from '../../core/dom.js';
 import { t, tl, pick } from '../../i18n/index.js';
 import { icon } from '../../ui/icons.js';
 import { revealOnScroll } from '../../ui/reveal.js';
+import { mountScrollStory } from '../../ui/scroll-story.js';
 import { characterMedia, hydrateCharacterMedia } from '../../ui/character-media.js';
 import { BUSINESS } from '../../config/business.js';
 import { findListing } from '../../data/catalog.js';
-import { btn, sectionHead, availabilityBadge, packageCards, slaText } from './shared.js';
+import { btn, sectionHead, availabilityBadge } from './shared.js';
+import {
+  visualCard, sceneFrame, catalogScene, briefScene, integrationScene, STORY_CHAPTERS,
+} from './product-scenes.js';
 
-const OFFER_ICONS = { realistic: 'smile', ready: 'grid', custom: 'brief', avatar: 'image', agent: 'sparkle', campaign: 'megaphone', integration: 'code' };
-const WAY_LINKS = { marketplace: '#/marketplace', custom: '#/brief', ai: '#/ai-generation' };
-const WAY_STATUS = { marketplace: BUSINESS.offerings.marketplace, custom: BUSINESS.offerings.custom, ai: BUSINESS.offerings.aiGeneration };
-const WAY_ICONS = { marketplace: 'grid', custom: 'brief', ai: 'sparkle' };
+/* Hero: three verified portraits, centre one is the focal point. */
+const HERO_CAST = ['reem', 'adam', 'lina'];
+const FOCAL = 1;
+/* Showcase: four other marketplace characters (no repeats with the hero). */
+const SHOWCASE_CAST = ['faisal', 'karim', 'salma', 'omar'];
 
-/* Hero cast: verified portraits only (see catalog `media`). Centre card is the focal point;
-   outer cards are hidden on tablet/mobile, so the middle three stay balanced on every screen. */
-const HERO_CAST = ['karim', 'lina', 'adam', 'reem', 'faisal'];
-const FOCAL = 2;
-/* Hero service strip — existing offer copy + real availability from BUSINESS (no new claims). */
-const HERO_SERVICES = [
-  { id: 'ready', status: BUSINESS.offerings.marketplace },
-  { id: 'custom', status: BUSINESS.offerings.custom },
-  { id: 'integration', status: 'on-request' }, // scoped per project, quoted by the team
-];
+const arrow = () => icon('arrowRight', { className: 'flip-rtl' });
+const cast = (ids) => ids.map(findListing).filter(Boolean);
 
-const heroCast = () => HERO_CAST.map(findListing).filter(Boolean);
-
-function heroStage(offer) {
-  const cast = heroCast();
+/* ---------- 01 · Hero ---------- */
+function hero() {
+  const people = cast(HERO_CAST);
   return `
-    <div class="hero-stage" data-reveal="1">
-      <div class="hero-stage__cast">
-        ${cast.map((l, i) => `
-          <figure class="cast-card cast-card--${i} ${i === FOCAL ? 'is-focal' : ''}">
-            ${characterMedia(l, { size: 'hero', label: i === FOCAL, priority: i === FOCAL })}
-            <figcaption class="cast-card__cap"><strong>${pick(l.name)}</strong><span>${pick(l.title)}</span></figcaption>
-          </figure>`).join('')}
+    <section class="site-section hero-b hero-c" aria-labelledby="hero-title">
+      <div class="container hero-c__inner">
+        <div class="hero-c__copy" data-reveal>
+          <p class="eyebrow hero-c__eyebrow"><span class="hero-c__dot" aria-hidden="true"></span>${t('home.hero.eyebrow')}</p>
+          <h1 id="hero-title" class="hero-b__title">${t('home.hero.title')}</h1>
+          <p class="hero-b__lead">${t('home.hero.description')}</p>
+          <div class="hero-b__actions">
+            <a class="btn btn--primary btn--lg" href="#/marketplace"><span>${t('cta.exploreCharacters')}</span>${icon('arrowRight', { className: 'flip-rtl btn__arrow' })}</a>
+            ${btn(t('cta.createCustom'), '#/brief', 'secondary')}
+          </div>
+        </div>
+        <div class="hero-stage" data-reveal="1">
+          <div class="hero-stage__cast">
+            ${people.map((l, i) => `
+              <figure class="cast-card ${i === FOCAL ? 'is-focal' : ''}">
+                ${characterMedia(l, { size: 'hero', label: i === FOCAL, priority: i === FOCAL })}
+                <figcaption class="cast-card__cap"><strong>${pick(l.name)}</strong><span>${pick(l.title)}</span></figcaption>
+              </figure>`).join('')}
+          </div>
+        </div>
+        ${people.some((l) => !l.media?.image) ? `<p class="hero-talent__note hero-c__note">${icon('info', { size: 14 })} ${t('home.hero.visualNote')}</p>` : ''}
       </div>
-      <ul class="hero-stage__services" role="list">
-        ${HERO_SERVICES.map(({ id, status }) => {
-          const item = offer.find((o) => o.id === id);
-          return item ? `
-          <li class="hero-service">
-            <span class="hero-service__icon">${icon(OFFER_ICONS[id])}</span>
-            <span class="hero-service__title">${item.title}</span>
-            ${availabilityBadge(status)}
-          </li>` : '';
-        }).join('')}
-      </ul>
-    </div>`;
+    </section>`;
+}
+
+/* ---------- 02 · What we offer ---------- */
+function offer() {
+  const o = (k) => t(`home.offerCards.${k}`);
+  const cards = [
+    { id: 'ready', visual: catalogScene(), href: '#/marketplace', cta: t('cta.exploreCharacters') },
+    { id: 'custom', visual: briefScene(), href: '#/brief', cta: t('cta.createCustom') },
+    { id: 'integration', visual: integrationScene(), href: '#/request-integration', cta: t('cta.requestIntegration') },
+  ].map((c) => ({
+    ...c,
+    title: o(`${c.id}.title`),
+    text: o(`${c.id}.text`),
+    label: o(`${c.id}.label`),
+    cta: `<a class="link-arrow vcard__cta" href="${c.href}">${c.cta} ${arrow()}</a>`,
+  }));
+  return `
+    <section class="site-section home-offer" aria-labelledby="offer-title">
+      <div class="container">
+        ${sectionHead(o('title'), '', 'offer-title')}
+        <div class="vcard-grid">${cards.map(visualCard).join('')}</div>
+      </div>
+    </section>`;
+}
+
+/* ---------- 03 · Available now / coming soon ---------- */
+function status() {
+  const soonLive = BUSINESS.offerings.aiGeneration === 'available'; // never claim it before it is
+  return `
+    <section class="site-section site-section--tight home-status" aria-labelledby="status-title">
+      <div class="container">
+        <div class="status-split" data-reveal>
+          <div class="status-split__now">
+            ${availabilityBadge('available')}
+            <h2 id="status-title" class="status-split__title">${t('home.availability.title')}</h2>
+            <ul class="status-split__list" role="list">
+              ${tl('home.status.now').map((x) => `<li>${icon('check')}<span>${x}</span></li>`).join('')}
+            </ul>
+          </div>
+          <div class="status-split__soon">
+            ${availabilityBadge(soonLive ? 'available' : 'coming-soon')}
+            <h3 class="status-split__soon-title">${icon('sparkle')}<span>${t('home.status.soon')}</span></h3>
+            <p>${t('home.status.soonText')}</p>
+            <a class="link-arrow" href="#/ai-generation">${tl('home.ways.items')[2].cta} ${arrow()}</a>
+          </div>
+        </div>
+      </div>
+    </section>`;
+}
+
+/* ---------- 04 · Characters in action (scroll story) ---------- */
+function story() {
+  const s = (k) => t(`home.story.${k}`);
+  return `
+    <section class="site-section home-story" aria-labelledby="story-title">
+      <div class="container">
+        ${sectionHead(s('title'), s('intro'), 'story-title')}
+        <div class="story" data-story>
+          <div class="story__stage" data-story-stage>
+            <div class="story__sticky">
+              ${STORY_CHAPTERS.map((c) => `
+                <div class="story__scene" data-scene="${c.id}">${sceneFrame(s(`${c.key}.label`), c.scene(), 'sc-visual--stage')}</div>`).join('')}
+            </div>
+          </div>
+          <ol class="story__chapters" role="list">
+            ${STORY_CHAPTERS.map((c, i) => `
+              <li class="story__chapter" data-chapter="${c.id}" data-reveal>
+                <div class="story__visual">${sceneFrame(s(`${c.key}.label`), c.scene())}</div>
+                <div class="story__copy">
+                  <span class="story__kicker"><span class="story__num">${String(i + 1).padStart(2, '0')}</span>${s(`${c.key}.kicker`)}</span>
+                  <h3 class="story__title">${s(`${c.key}.title`)}</h3>
+                  <p class="story__text">${s(`${c.key}.text`)}</p>
+                </div>
+              </li>`).join('')}
+          </ol>
+        </div>
+        <p class="story__note" data-reveal>${icon('info', { size: 14 })}<span>${s('note')}</span>
+          <a class="link-arrow" href="#/request-integration">${t('cta.requestIntegration')} ${arrow()}</a></p>
+      </div>
+    </section>`;
+}
+
+/* ---------- 05 · Showcase + final CTA ---------- */
+function showcase() {
+  const people = cast(SHOWCASE_CAST);
+  return `
+    <section class="site-section home-showcase" aria-labelledby="showcase-title">
+      <div class="container">
+        ${sectionHead(t('home.showcase.title'), t('home.showcase.intro'), 'showcase-title')}
+        <ul class="char-row" role="list">
+          ${people.map((l, i) => `
+            <li class="char-tile" data-reveal="${i}">
+              <a class="char-tile__link" href="#/marketplace?character=${l.id}">
+                ${characterMedia(l, { size: 'card' })}
+                <span class="char-tile__name">${pick(l.name)}</span>
+                <span class="char-tile__type">${pick(l.title)}</span>
+              </a>
+            </li>`).join('')}
+        </ul>
+        <div class="center-cta">${btn(t('home.showcase.all'), '#/marketplace', 'secondary')}</div>
+
+        <div class="closing" data-reveal>
+          <h2 class="closing__title">${t('home.closing.title')}</h2>
+          <p class="closing__text">${t('home.closing.text')}</p>
+          ${btn(t('cta.createCustom'), '#/brief', 'primary')}
+        </div>
+      </div>
+    </section>`;
 }
 
 export default {
   render() {
-    const offer = tl('home.offer.items');
-    const ways = tl('home.ways.items');
-    const process = tl('home.process.items');
-
-    return `
-      <!-- Hero -->
-      <section class="site-section hero-b hero-c" aria-labelledby="hero-title">
-        <div class="container hero-c__inner">
-          <div class="hero-c__copy" data-reveal>
-            <p class="eyebrow hero-c__eyebrow"><span class="hero-c__dot" aria-hidden="true"></span>${t('home.hero.eyebrow')}</p>
-            <h1 id="hero-title" class="hero-b__title">${t('home.hero.title')}</h1>
-            <p class="hero-b__lead">${t('home.hero.description')}</p>
-            <div class="hero-b__actions">
-              <a class="btn btn--primary btn--lg" href="#/marketplace"><span>${t('cta.exploreCharacters')}</span>${icon('arrowRight', { className: 'flip-rtl btn__arrow' })}</a>
-              ${btn(t('cta.createCustom'), '#/brief', 'secondary')}
-            </div>
-            <a class="link-arrow" href="#/contact">${t('cta.talkToTeam')} ${icon('arrowRight', { className: 'flip-rtl' })}</a>
-          </div>
-          ${heroStage(offer)}
-          ${heroCast().some((l) => !l.media?.image) ? `<p class="hero-talent__note hero-c__note">${icon('info', { size: 14 })} ${t('home.hero.visualNote')}</p>` : ''}
-        </div>
-      </section>
-
-      <!-- Who it's for -->
-      <section class="site-section site-section--tight" aria-labelledby="aud-title">
-        <div class="container">
-          ${sectionHead(t('home.audiences.title'), '', 'aud-title')}
-          <div class="audiences">
-            ${['business', 'creators'].map((k, i) => `
-              <a class="audience-card audience-card--${k}" href="#/${k}" data-reveal="${i}">
-                <span class="audience-card__icon">${icon(k === 'business' ? 'flag' : 'smile')}</span>
-                <h3 class="audience-card__title">${t(`home.audiences.${k}.title`)}</h3>
-                <p class="audience-card__text">${t(`home.audiences.${k}.text`)}</p>
-                <span class="link-arrow">${t(`home.audiences.${k}.cta`)} ${icon('arrowRight', { className: 'flip-rtl' })}</span>
-              </a>`).join('')}
-          </div>
-        </div>
-      </section>
-
-      <!-- What we provide -->
-      <section class="site-section site-section--tinted" aria-labelledby="offer-title">
-        <div class="container">
-          ${sectionHead(t('home.offer.title'), '', 'offer-title')}
-          <div class="offer-grid">
-            ${offer.map((o, i) => `
-              <article class="offer-item" data-reveal="${i % 4}">
-                <span class="offer-item__icon">${icon(OFFER_ICONS[o.id])}</span>
-                <div><h3>${o.title}</h3><p>${o.text}</p></div>
-              </article>`).join('')}
-          </div>
-        </div>
-      </section>
-
-      <!-- Three ways -->
-      <section class="site-section" aria-labelledby="ways-title">
-        <div class="container">
-          ${sectionHead(t('home.ways.title'), t('home.ways.intro'), 'ways-title')}
-          <div class="ways">
-            ${ways.map((w, i) => `
-              <a class="way-card way-card--${w.id} ${WAY_STATUS[w.id] === 'coming-soon' ? 'is-soon' : ''}" href="${WAY_LINKS[w.id]}" data-reveal="${i}" data-way="${w.id}">
-                <span class="way-card__icon">${icon(WAY_ICONS[w.id])}</span>
-                ${availabilityBadge(WAY_STATUS[w.id])}
-                <h3 class="way-card__title">${w.title}</h3>
-                <p class="way-card__text">${w.text}</p>
-                <span class="link-arrow">${w.cta} ${icon('arrowRight', { className: 'flip-rtl' })}</span>
-              </a>`).join('')}
-          </div>
-        </div>
-      </section>
-
-      <!-- Integration -->
-      <section class="site-section site-section--dark" aria-labelledby="int-title">
-        <div class="container">
-          <div class="int-band">
-            <div class="int-band__copy" data-reveal>
-              <h2 id="int-title" class="section-head__title">${t('home.integration.title')}</h2>
-              <p class="int-band__text">${t('home.integration.text')}</p>
-            </div>
-            <div class="int-paths">
-              <a class="int-path" href="#/integration" data-reveal="1">
-                <span class="int-path__icon">${icon('download')}</span>
-                <h3>${t('home.integration.assetsTitle')}</h3>
-                <p>${t('home.integration.assetsText')}</p>
-                <span class="link-arrow">${t('cta.getAssets')} ${icon('arrowRight', { className: 'flip-rtl' })}</span>
-              </a>
-              <a class="int-path int-path--primary" href="#/request-integration" data-reveal="2">
-                <span class="int-path__icon">${icon('code')}</span>
-                <h3>${t('home.integration.integrateTitle')}</h3>
-                <p>${t('home.integration.integrateText')}</p>
-                <span class="link-arrow">${t('cta.requestIntegration')} ${icon('arrowRight', { className: 'flip-rtl' })}</span>
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Packages -->
-      <section class="site-section" aria-labelledby="pkg-title">
-        <div class="container">
-          ${sectionHead(t('home.packages.title'), t('home.packages.intro'), 'pkg-title')}
-          ${packageCards({ compact: true })}
-          <div class="center-cta">${btn(t('cta.viewPackages'), '#/packages', 'secondary')}</div>
-        </div>
-      </section>
-
-      <!-- Uses -->
-      <section class="site-section site-section--tinted" aria-labelledby="uses-title">
-        <div class="container">
-          ${sectionHead(t('home.uses.title'), '', 'uses-title')}
-          <div class="uses-split">
-            ${['business', 'creators'].map((k, i) => `
-              <div class="uses-col" data-reveal="${i}">
-                <h3>${t(`home.uses.${k}Title`)}</h3>
-                <ul role="list">${tl(`home.uses.${k}`).map((u) => `<li>${icon('check')}<span>${u}</span></li>`).join('')}</ul>
-              </div>`).join('')}
-          </div>
-        </div>
-      </section>
-
-      <!-- Process -->
-      <section class="site-section" aria-labelledby="proc-title">
-        <div class="container">
-          ${sectionHead(t('home.process.title'), slaText(), 'proc-title')}
-          <ol class="steps-b" role="list">
-            ${process.map((s, i) => `
-              <li class="step-b" data-reveal="${i}">
-                <span class="step-b__num">${String(i + 1).padStart(2, '0')}</span>
-                <h3 class="step-b__title">${s.title}</h3>
-                <p class="step-b__text">${s.text}</p>
-              </li>`).join('')}
-          </ol>
-        </div>
-      </section>
-
-      <!-- Availability -->
-      <section class="site-section site-section--tinted" aria-labelledby="avail-title">
-        <div class="container">
-          ${sectionHead(t('home.availability.title'), '', 'avail-title')}
-          <div class="avail">
-            <div class="avail__col" data-reveal>
-              <h3>${availabilityBadge('available')}</h3>
-              <ul role="list">${tl('home.availability.nowItems').map((x) => `<li>${icon('check')}<span>${x}</span></li>`).join('')}</ul>
-            </div>
-            <div class="avail__col avail__col--soon" data-reveal="1">
-              <h3>${availabilityBadge('coming-soon')}</h3>
-              <ul role="list">${tl('home.availability.soonItems').map((x) => `<li>${icon('sparkle')}<span>${x}</span></li>`).join('')}</ul>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Final CTA -->
-      <section class="site-section final-cta" aria-labelledby="final-title">
-        <div class="container final-cta__inner" data-reveal>
-          <h2 id="final-title" class="final-cta__title">${t('home.final.title')}</h2>
-          <p class="section-head__intro">${t('home.final.text')}</p>
-          <div class="hero-b__actions">
-            ${btn(t('cta.createCustom'), '#/brief', 'primary')}
-            ${btn(t('cta.requestIntegration'), '#/request-integration', 'secondary')}
-            ${btn(t('cta.talkToTeam'), '#/contact', 'tertiary')}
-          </div>
-        </div>
-      </section>`;
+    return hero() + offer() + status() + story() + showcase();
   },
 
   mount(root) {
     const d = disposer();
     d.add(revealOnScroll(root));
+    d.add(mountScrollStory(root));
     hydrateCharacterMedia(root);
     return () => d.run();
   },

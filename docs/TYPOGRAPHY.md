@@ -8,11 +8,11 @@ All sizes are fluid with `clamp()` between 360px and 1440px viewports — no per
 
 | Role | Token | 360px | 768px | 1440px | Used for |
 | --- | --- | --- | --- | --- | --- |
-| Hero heading | `--fs-hero` | 32 | 40 | 52 | Homepage headline (max width `--measure-hero`: 18ch EN / 22ch AR) |
+| Hero heading | `--fs-hero` | 32 | 38 | 48 | Homepage headline (max width `--measure-hero`: 18ch EN / 22ch AR) |
 | Page title | `--fs-h1` | 28 | 33 | 40 | Inner page h1 |
-| Section heading | `--fs-h2` | 24 | 28 | 34 | Section titles, final CTA |
+| Section heading | `--fs-h2` | 24 | 27 | 32 | Section titles, final CTA |
 | Title | `--fs-title` | 20 | 22 | 24 | Wizard steps, modal names, confirmations |
-| Card title | `--fs-h3` | 17 | 17 | 18 | Cards, packages, offer items, process steps |
+| Card title | `--fs-h3` | 18 | 19 | 20 | Cards, packages, offer items, process steps |
 | Small title | `--fs-h4` | 16 | 16 | 17 | Wizard labels, review sections |
 | Lead | `--fs-lead` | 16 | 17 | 18 | Intros and section descriptions |
 | Body | `--fs-body` | 15 | 15 | 16 | Running text |
