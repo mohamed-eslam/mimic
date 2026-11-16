@@ -1,0 +1,36 @@
+# Character imagery — specification
+
+The site currently shows **labeled placeholders** in every character slot. Replace them with
+original, properly licensed, photorealistic AI-generated character images.
+
+## Rights (required before publishing)
+- Only use imagery you own or have a written license for, including commercial resale/sub-licensing
+  if characters are sold in the Marketplace.
+- No real people's likenesses without a signed release. No stock photos of identifiable people.
+- Keep the generation tool's license terms with each asset (`license.txt` in the character folder).
+
+## Art direction
+- Photorealistic adult humans, natural proportions, realistic skin texture, professional expressions.
+- Professional studio photography look: soft key light, gentle rim light, neutral color grading.
+- Three-quarter or front-facing, waist-up framing for the main image.
+- Consistent lighting and camera height across the whole catalog.
+- Styling describes clothing only; never imply nationality or language from appearance.
+- Not cartoon, Pixar, clay, toy or fantasy styles.
+
+## Files per character (`assets/characters/<id>/`)
+| File | Spec |
+| --- | --- |
+| `main.webp` | Transparent background, 1200×1600 px (3:4), subject centered, feet/waist cropped consistently |
+| `main.png` | Same as above (fallback / customer delivery) |
+| `pose-*.webp` | Optional additional poses, same framing |
+| `expression-*.webp` | Optional expression variants (smile, neutral, thinking…) |
+| `loop.webm` / `loop.mp4` | Optional short, muted, looping clip (idle breathing / small motion only) |
+| `license.txt` | Source tool, license terms, date, generator prompt reference |
+
+## Publishing a character
+1. Add the files above.
+2. In `js/data/catalog.js`, set `media.image` (and `poses`, `expressions`, `loop` if available).
+3. Remove `sample: true` once the character is approved for sale.
+
+Static images are animated with subtle CSS only (float, hover, entrance). Talking, blinking or
+lip-sync require separate animation/video assets and are not implied by the site.

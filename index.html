@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>MIMIC — Real Characters. Digital Possibilities.</title>
+  <meta name="description" content="Realistic digital characters for brands and creators — ready-made, custom-designed, and integrated into your website, app, chatbot or AI agent.">
+  <meta name="theme-color" content="#F8FAF9">
+  <!-- Apply saved theme + language before first paint (prevents flashing the wrong theme / direction) -->
+  <script>
+    (function () {
+      var d = document.documentElement, theme = 'light', lang = 'en';
+      try {
+        var saved = localStorage.getItem('character-lab:theme');
+        // explicit choice wins; otherwise follow the operating-system preference
+        theme = saved === 'dark' || saved === 'light' ? saved
+          : (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        var q = new URLSearchParams(location.search).get('lang');
+        lang = q === 'ar' || q === 'en' ? q : localStorage.getItem('character-lab:locale') === 'ar' ? 'ar' : 'en';
+      } catch (e) {}
+      d.dataset.theme = theme;
+      d.lang = lang;
+      d.dir = lang === 'ar' ? 'rtl' : 'ltr';
+      if (theme === 'dark') document.querySelector('meta[name="theme-color"]').setAttribute('content', '#101713');
+    })();
+  </script>
+  <meta property="og:title" content="MIMIC — Real Characters. Digital Possibilities.">
+  <meta property="og:description" content="Discover, customize, or commission realistic digital characters for your brand, content, website, app, or AI experience.">
+  <!-- TODO: add a square MIMIC favicon / app icon (not yet supplied). The old flask icon was retired. -->
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Alexandria:wght@400;500;600;700;800&display=swap">
+
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/site.css">
+  <link rel="stylesheet" href="css/character.css">
+  <link rel="stylesheet" href="css/pages.css">
+  <link rel="stylesheet" href="css/typography.css">
+  <link rel="stylesheet" href="css/a11y.css">
+</head>
+<body data-layout="site">
+  <a class="skip-link" href="#main" data-skip-link>Skip to content</a>
+
+  <div class="shell">
+    <!-- Public website -->
+    <header class="site-header" data-chrome="site-header"></header>
+
+    <!-- Product workspace -->
+    <aside class="sidebar" data-chrome="sidebar"></aside>
+    <header class="topbar" data-chrome="topbar"></header>
+
+    <main id="main" class="main" tabindex="-1">
+      <div id="view" class="view"></div>
+    </main>
+
+    <footer class="site-footer" data-chrome="site-footer"></footer>
+  </div>
+
+  <!-- Mobile navigation drawer (content depends on layout) -->
+  <div class="drawer" id="drawer" hidden></div>
+
+  <div class="toast-region" role="status" aria-live="polite"></div>
+
+  <noscript>
+    <p style="padding:2rem;font-family:sans-serif">MIMIC needs JavaScript enabled.</p>
+  </noscript>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

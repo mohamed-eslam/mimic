@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Character Lab · Tests</title>
+  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/character.css">
+  <style>
+    body { padding: 24px; font-family: var(--font-body); }
+    #sandbox { width: 300px; height: 300px; position: fixed; top: 16px; right: 16px; background: #fff; }
+    #frames { position: fixed; left: 0; top: 0; z-index: 5; }
+    #frames iframe { border: 1px solid #ddd; height: 700px; background: #fff; }
+    .pass { color: #23875f; } .fail { color: #c2436f; font-weight: 700; }
+    pre { white-space: pre-wrap; font-size: 13px; }
+  </style>
+</head>
+<body>
+  <h1>Character Lab tests</h1>
+  <p>Open via a static server (e.g. Live Server): <code>/tests/</code>. Results appear below.</p>
+  <div id="summary" data-status="running">Running…</div>
+  <pre id="results"></pre>
+  <div id="sandbox"></div>
+  <div id="frames"></div>
+  <script type="module" src="run.js"></script>
+</body>
+</html>

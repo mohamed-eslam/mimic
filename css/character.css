@@ -1,0 +1,64 @@
+/* ==========================================================================
+   Character engine styles. Self-contained: only uses fallbacks, so the
+   engine can be dropped into another page without the app's tokens.
+   ========================================================================== */
+
+.cl-char {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+}
+.cl-char__svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.cl-char__svg stop {
+  transition: stop-color 420ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Interactive characters own their touch gestures (drag) */
+.cl-char[data-interactive] {
+  cursor: grab;
+  touch-action: none;
+}
+.cl-char.is-dragging { cursor: grabbing; }
+.cl-char[data-interactive]:focus { outline: none; }
+.cl-char[data-interactive]:focus-visible {
+  outline: 3px dashed var(--color-focus, #8d72fb);
+  outline-offset: 6px;
+  border-radius: 40%;
+  box-shadow: none;
+}
+
+/* Sleep z's */
+.cl-char__zzz text {
+  font-family: var(--font-display, "Fredoka", system-ui, sans-serif);
+  font-weight: 600;
+  font-size: 20px;
+  fill: var(--color-text-muted, #7a7192);
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.cl-char.is-sleeping .cl-char__zzz text {
+  animation: cl-char-z 3.2s ease-in-out infinite;
+}
+.cl-char.is-sleeping .cl-char__zzz text:nth-child(2) { animation-delay: 1.05s; }
+.cl-char.is-sleeping .cl-char__zzz text:nth-child(3) { animation-delay: 2.1s; }
+
+@keyframes cl-char-z {
+  0%   { opacity: 0; transform: translate(0, 6px) scale(0.6); }
+  25%  { opacity: 0.9; }
+  100% { opacity: 0; transform: translate(10px, -14px) scale(1.15); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cl-char__svg stop { transition: none; }
+  .cl-char.is-sleeping .cl-char__zzz text { animation: none; opacity: 0.8; }
+}

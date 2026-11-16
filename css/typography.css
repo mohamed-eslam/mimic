@@ -1,0 +1,98 @@
+/* ==========================================================================
+   Typography — applies the role scale from tokens.css (--fs-*, --lh-*) to
+   components in one place. Fonts: Manrope (English), Alexandria (Arabic).
+   Sizes are fluid (clamp) — no per-breakpoint font overrides needed.
+   ========================================================================== */
+
+body { font-size: var(--fs-body); line-height: var(--lh-body); }
+
+/* ---------- Display & headings ---------- */
+.hero-b__title, .display {
+  font-size: var(--fs-hero);
+  line-height: var(--lh-hero);
+}
+.page-hero__title, .wizard-head__title, .scaffold__title, main .page-header__title {
+  font-size: var(--fs-h1);
+  line-height: var(--lh-h1);
+}
+.section-head__title, .final-cta__title {
+  font-size: var(--fs-h2);
+  line-height: var(--lh-h2);
+}
+.wz-step__title, .talent-detail__name, .dialog__title, .finder__card h2, .likeness__title,
+.contact-form__title, .wz-success h2, .soon__alt p {
+  font-size: var(--fs-title);
+  line-height: var(--lh-title);
+}
+/* Card titles */
+.way-card__title, .audience-card__title, .package-card__title, .talent-card__name, .int-option h2,
+.card__title, .use-card__title, .contact-option h2, .uses-col h3, .avail__col h3, .int-band .int-path h3 {
+  font-size: var(--fs-h3);
+  line-height: var(--lh-h3);
+}
+/* Small card titles */
+.offer-item h3, .step-b__title, .int-area h3, .service-line h3, .wz-review__section h3,
+.soon__planned h2, .brief-preview__title, .wz-result h3, .finder__q legend, .talent-detail__paths-title {
+  font-size: var(--fs-h4);
+  line-height: var(--lh-h3);
+}
+
+/* ---------- Running text ---------- */
+.hero-b__lead, .page-hero__lead, .section-head__intro, .wizard-head__lead, .int-band__text,
+.wz-success__text, .scaffold__lead, .final-cta .section-head__intro {
+  font-size: var(--fs-lead);
+  line-height: var(--lh-lead);
+}
+.way-card__text, .audience-card__text, .use-card__text, .offer-item p, .package-card__best, .package-card__list li,
+.service-line p, .step-b__text, .int-option p, .int-option li, .int-area ul, .contact-option p, .talent-card__title,
+.talent-detail__info > p, .likeness p, .uses-col li, .avail__col li, .soon__planned li, .wz-review__intro,
+.int-path p, .brief-preview li, .market__custom p, .notice, .wz-note, .wz-result p {
+  font-size: var(--fs-body-sm);
+  line-height: var(--lh-body);
+}
+
+/* ---------- Interface text ---------- */
+.site-nav__link, .app-nav__link, .drawer-nav__link, .site-footer__link,
+.btn, .input, .select, .textarea, .wz-option__label, .pref-btn, .link-arrow {
+  font-size: var(--fs-ui);
+}
+.btn { line-height: var(--lh-ui); }
+.btn--sm, .pref-btn { font-size: var(--fs-label); }
+.site-footer__link, .site-footer__brand p { line-height: var(--lh-lead); }
+/* 16px inputs also prevent iOS Safari from zooming on focus */
+.input, .select, .textarea { line-height: var(--lh-ui); }
+
+/* Labels — 14px, never smaller */
+.eyebrow, .label, .filter__label, .panel__section-title, .site-footer__heading, .scaffold__plan-title,
+.wz-progress__label, .wz-summary__block h3, .talent-detail__meta dt, .chip, .filter .chip, .tab,
+.wz-hint, .wz-error, .wz-option__desc, .hero-talent__note, .talent-detail__note, .packages__note, .wz-opt,
+.talent-strip__item figcaption, .wz-review__section dl div, .wz-summary__block li {
+  font-size: var(--fs-label);
+}
+.wz-option__desc, .wz-hint, .wz-error, .talent-strip__item figcaption, .wz-summary__block li { line-height: var(--lh-lead); }
+.wz-label { font-size: var(--fs-h4); line-height: var(--lh-h3); }
+
+/* Captions — 13px floor for badges and tags */
+.badge, .talent-card__tags span, .site-footer__soon, .cmedia__tag, .site-footer__bottom, .wz-progress__step {
+  font-size: var(--fs-caption);
+}
+
+/* ---------- Rhythm: eyebrow → heading → text → actions ---------- */
+.hero-b__copy, .page-hero__copy { gap: var(--flow-heading); }
+.hero-b__copy .eyebrow, .page-hero__copy .eyebrow { margin-block-end: calc(var(--flow-eyebrow) - var(--flow-heading)); }
+.hero-b__actions { margin-block-start: calc(var(--flow-actions) - var(--flow-heading)); }
+.section-head { gap: var(--flow-heading); }
+.wizard-head { gap: var(--space-3); }
+.way-card, .audience-card, .package-card, .int-option { gap: var(--space-3); }
+
+/* ---------- Arabic refinements ---------- */
+:lang(ar) .eyebrow { font-size: var(--fs-label); font-weight: var(--weight-semibold); }
+:lang(ar) .hero-b__title, :lang(ar) .page-hero__title, :lang(ar) .section-head__title { font-weight: var(--weight-bold); }
+:lang(ar) .btn { font-weight: var(--weight-semibold); }
+
+/* Narrow cards: name and badge stack instead of overflowing */
+.talent-card__head { flex-wrap: wrap; row-gap: var(--space-1); }
+.talent-card__name { min-width: 0; overflow-wrap: anywhere; }
+
+/* Placeholder tag may sit on narrow cards: wrap rather than be clipped by the card */
+.cmedia__tag { max-width: calc(100% - var(--space-4)); white-space: normal; line-height: 1.3; text-align: center; }
