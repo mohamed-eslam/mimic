@@ -13,6 +13,15 @@
  * Missing files fall back to a labeled placeholder and are listed by
  * `CharacterLab.assetReport()` in the browser console.
  *
+ * `media` (optional) points at supplied artwork that doesn't follow the folder
+ * convention — files keep their original names in assets/characters/:
+ *   image → main portrait path
+ *   fit   → 'cover' for full-bleed studio photos (subject centred on a wide
+ *           plain backdrop: only empty backdrop is trimmed, never the person);
+ *           'contain' (default) for transparent cutouts
+ *   focus → object-position for cover framing (default 'center top')
+ *   loop  → optional short, silent looping clip (none supplied yet)
+ *
  * Filter values are keys; their display labels live in the i18n dictionaries
  * (catalog.values.*), so filters and cards are fully bilingual.
  */
@@ -26,6 +35,9 @@ export const FILTERS = {
 export const POSES = ['front', 'welcome', 'pointing', 'explaining', 'thinking'];
 export const EXPRESSIONS = ['neutral', 'smile', 'thinking', 'surprised'];
 
+/** Supplied studio portraits (1376×768, plain backdrop). Original filenames preserved. */
+const photo = (file, focus) => ({ image: `assets/characters/${encodeURIComponent(file)}`, fit: 'cover', ...(focus ? { focus } : {}) });
+
 const character = (def) => ({
   sample: true,
   expressions: ['neutral', 'smile'],
@@ -37,6 +49,7 @@ const character = (def) => ({
 export const CATALOG = [
   character({
     id: 'faisal',
+    media: photo('magnific_premium-photorealistic-aigenerated-saudi_6AHF1WNiJO.png'),
     name: { en: 'Faisal', ar: 'فيصل' },
     title: { en: 'Corporate host in traditional attire', ar: 'مضيف رسمي بالزي التقليدي' },
     description: {
@@ -52,6 +65,7 @@ export const CATALOG = [
   }),
   character({
     id: 'reem',
+    media: photo('magnific_she-should-have-distinctive-natural-facial-features_tCi6G7vmZJ.png'),
     name: { en: 'Reem', ar: 'ريم' },
     title: { en: 'Business consultant', ar: 'مستشارة أعمال' },
     description: {
@@ -67,6 +81,7 @@ export const CATALOG = [
   }),
   character({
     id: 'karim',
+    media: photo('magnific_he-should-look_ksDMoXo16B.png'),
     name: { en: 'Karim', ar: 'كريم' },
     title: { en: 'Business professional', ar: 'رجل أعمال' },
     description: {
@@ -96,6 +111,7 @@ export const CATALOG = [
   }),
   character({
     id: 'adam',
+    media: photo('magnific_photorealistic-male-digital-assistant_Bh4P627oQR.png'),
     name: { en: 'Adam', ar: 'آدم' },
     title: { en: 'International digital assistant', ar: 'مساعد رقمي بطابع عالمي' },
     description: {
@@ -110,6 +126,7 @@ export const CATALOG = [
   }),
   character({
     id: 'lina',
+    media: photo('magnific_premium-photorealistic-aigenerated-egyptian_s7oBmBBl8e.png'),
     name: { en: 'Lina', ar: 'لينا' },
     title: { en: 'Digital presenter', ar: 'مقدّمة محتوى رقمي' },
     description: {
@@ -125,6 +142,7 @@ export const CATALOG = [
   }),
   character({
     id: 'omar',
+    media: photo('magnific_he-should-have-a-mature_s7oBhWYl8e (1).png'),
     name: { en: 'Omar', ar: 'عمر' },
     title: { en: 'Senior advisor', ar: 'مستشار أول' },
     description: {
@@ -139,6 +157,7 @@ export const CATALOG = [
   }),
   character({
     id: 'salma',
+    media: photo('magnific_she-should-look_1lpDovir4r.png'),
     name: { en: 'Salma', ar: 'سلمى' },
     title: { en: 'Lifestyle & social host', ar: 'مقدّمة محتوى لايف ستايل' },
     description: {

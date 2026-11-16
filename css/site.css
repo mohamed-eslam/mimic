@@ -239,6 +239,17 @@ a:hover > .link-arrow .icon, .link-arrow:hover .icon { translate: calc(4px * var
   animation: media-in var(--dur-slow) var(--ease-out) both;
 }
 @keyframes media-in { from { opacity: 0; transform: translateY(8px); } }
+/* Full-bleed studio photos (subject centred on a wide plain backdrop): fill the 3:4 frame.
+   Height is never cropped (head → waist stays whole); only empty backdrop at the sides is trimmed. */
+.cmedia--photo { background: #efefe6; } /* matches the supplied studio backdrop in both themes */
+.cmedia--photo .cmedia__img {
+  object-fit: cover;
+  object-position: var(--media-focus, center top);
+  filter: none;
+}
+/* Optional silent loop (only when a real clip is configured) sits over its poster frame */
+.cmedia__loop { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: var(--media-focus, center top); }
+.cmedia:not(.cmedia--photo) .cmedia__loop { object-fit: contain; object-position: center bottom; }
 .cmedia--thumb { border-radius: var(--radius-sm); }
 .cmedia--thumb .cmedia__ph { width: 70%; }
 .cmedia__ph { width: 82%; height: auto; margin-block-start: auto; opacity: 0.9; }
@@ -429,7 +440,13 @@ a:hover > .link-arrow .icon, .link-arrow:hover .icon { translate: calc(4px * var
 .talent-dialog { width: min(980px, calc(100vw - var(--space-6))); max-height: calc(100dvh - var(--space-6)); padding: 0; border: 0; border-radius: var(--radius-xl); background: var(--color-surface); box-shadow: var(--shadow-lg); }
 .talent-dialog::backdrop { background: rgb(21 18 47 / 0.5); backdrop-filter: blur(4px); }
 .talent-dialog[open] { animation: dialog-in var(--dur-slow) var(--ease-out); }
+.talent-dialog { margin: auto; } /* keep the native centred position (base reset zeroes margins) */
 .talent-detail { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: var(--space-7); padding: var(--space-6); }
+.talent-detail__media { align-self: start; }
+/* Pose thumbnails: small, even grid (pose files are not supplied yet → labeled placeholders) */
+.pose-strip { display: grid; grid-template-columns: repeat(auto-fill, minmax(76px, 1fr)); gap: var(--space-2); }
+.pose-strip__item { margin: 0; display: flex; flex-direction: column; gap: var(--space-1); min-width: 0; }
+.pose-strip__item figcaption { font-size: var(--fs-caption); color: var(--color-text-muted); text-align: center; line-height: 1.4; }
 .talent-detail__info { display: flex; flex-direction: column; gap: var(--space-4); }
 .talent-detail__head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-3); }
 .talent-detail__name { font-size: var(--text-2xl); font-weight: var(--weight-extrabold); }

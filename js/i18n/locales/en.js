@@ -238,7 +238,7 @@ export default {
     eyebrow: 'Character Marketplace',
     title: 'Realistic Characters, Ready for Your Brand.',
     description: 'Browse characters from our studio, check what each one supports, then request pricing or our integration service.',
-    sampleNote: 'Sample catalog: character images are placeholders until licensed artwork is published. Our team confirms availability, options and license terms for every request.',
+    sampleNote: 'Sample catalog: character images are previews, and characters without artwork yet show a labeled placeholder. Our team confirms availability, options and license terms for every request.',
     filters: { all: 'All', reset: 'Clear filters' },
     results: '{n} characters',
     emptyTitle: 'No characters match these filters',

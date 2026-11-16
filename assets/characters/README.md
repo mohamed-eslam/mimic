@@ -34,3 +34,24 @@ original, properly licensed, photorealistic AI-generated character images.
 
 Static images are animated with subtle CSS only (float, hover, entrance). Talking, blinking or
 lip-sync require separate animation/video assets and are not implied by the site.
+
+## Supplied artwork (Nov 2026)
+Studio portraits (1376×768 PNG, plain #efefe6 backdrop) live in this folder under their original
+filenames and are referenced explicitly via `media: photo('<file>')` in `js/data/catalog.js`
+(framed with `object-fit: cover`: only empty backdrop is trimmed, never the person).
+
+| Character | File |
+| --- | --- |
+| Faisal | `magnific_premium-photorealistic-aigenerated-saudi_6AHF1WNiJO.png` |
+| Omar | `magnific_he-should-have-a-mature_s7oBhWYl8e (1).png` |
+| Karim | `magnific_he-should-look_ksDMoXo16B.png` |
+| Adam | `magnific_photorealistic-male-digital-assistant_Bh4P627oQR.png` |
+| Reem | `magnific_she-should-have-distinctive-natural-facial-features_tCi6G7vmZJ.png` |
+| Lina | `magnific_premium-photorealistic-aigenerated-egyptian_s7oBmBBl8e.png` |
+| Salma | `magnific_she-should-look_1lpDovir4r.png` |
+| Nour | — not supplied (light-blue blouse portrait expected) |
+
+Unmatched (kept, not used): `…he-should-look-mostly-human_UPmtud7wny.png`, `…premium-photorealistic-nearhuman_bxT0XgK5Y2.png`,
+`…original-premium-abstract-3d-brand-mascot_gOI8u6FSXO.png`, `…premium-stylized-3d-egyptian-female_lJ8oCSfgv9.png`,
+`…premium-stylized-3d-egyptian-male-character_LwBXvCuswO.png`.
+`license.txt` files are still missing for every character.
