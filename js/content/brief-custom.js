@@ -16,6 +16,7 @@ const PACKAGE_NAMES = {
 };
 
 const isIndividual = (a) => a.who === 'individual';
+const noListing = (a) => !a.listing;
 const usesPhotos = (a, ctx) => a.likeness === 'yes' || (ctx.files.personPhotos ?? []).length > 0 || (ctx.files.references ?? []).length > 0;
 
 export const customBriefSchema = {
@@ -270,3 +271,76 @@ export const customBriefSchema = {
   ],
 };
 
+/* ==========================================================================
+   Four-stage layout (Style → Purpose → Details → Review & submit).
+   The question definitions above stay the single source of truth: this only
+   regroups them by id and adds layout flags — every field, condition, validation
+   rule and summary label is preserved.
+   ========================================================================== */
+const Q = Object.fromEntries(customBriefSchema.steps.flatMap((st) => st.questions ?? []).map((q) => [q.id, q]));
+const both = (f, g) => (f && g ? (a, ctx) => f(a, ctx) && g(a, ctx) : f ?? g);
+/** pick(id, { advanced, showIf }) — reuse a question; extra showIf is AND-ed with its own. */
+const pick_ = (id, { showIf, ...flags } = {}) => ({ ...Q[id], ...flags, showIf: both(Q[id].showIf, showIf) });
+const look = (id, flags) => pick_(id, { ...flags, showIf: noListing }); // appearance only for new characters
+const portrait = (id) => findListing(id)?.media?.image;
+
+const STYLE_KIND = {
+  id: 'characterKind', type: 'cards', label: 'Character style', required: true, summaryLabel: 'Character style', showIf: noListing,
+  options: [
+    { value: 'realistic', label: 'Realistic human', image: portrait('reem') },
+    { value: 'humanlike', label: 'Human-like', image: portrait('nova') },
+    { value: 'cartoon3d', label: '3D character', image: portrait('milo') },
+    { value: 'open', label: 'Open to suggestions', icon: 'sparkle' },
+  ],
+};
+
+customBriefSchema.steps = [
+  {
+    id: 'style',
+    title: 'Choose a character style',
+    short: 'Style',
+    questions: [
+      Q.listingName, Q.packageName, Q.listingNote,
+      STYLE_KIND,
+      look('likeness'), look('likenessNote'), look('gender'), look('age'),
+      look('styling', { advanced: true }), look('clothing', { advanced: true }), look('look', { advanced: true }),
+      look('hair', { advanced: true }), look('background', { advanced: true }),
+      look('references', { advanced: true }), look('appearanceNotes', { advanced: true }),
+    ],
+  },
+  {
+    id: 'purpose',
+    title: 'What is the character for?',
+    short: 'Purpose',
+    questions: [
+      Q.who, Q.needs, Q.language, Q.dialect, Q.traits,
+      pick_('needsNotes', { advanced: true }),
+    ],
+  },
+  {
+    id: 'details',
+    title: 'Creative details',
+    short: 'Details',
+    questions: [
+      { id: 'secBrand', type: 'section', label: 'Your brand', showIf: (a) => !isIndividual(a) },
+      Q.brandName,
+      { id: 'secAbout', type: 'section', label: 'About you', showIf: isIndividual },
+      Q.characterName, Q.personalStyle, Q.personPhotos, Q.usage, Q.likenessConsent,
+      { id: 'secProject', type: 'section', label: 'Your project' },
+      Q.deliverables,
+      Q.integration, Q.webPlatform, Q.webUrl, Q.appPlatform, Q.appTech, Q.aiPlatform, Q.aiLive, Q.aiNote, Q.integrationNote,
+      Q.timeline,
+      ...['industry', 'website', 'audience', 'market', 'brandColors', 'logo', 'guidelines', 'budget', 'notes'].map((id) => pick_(id, { advanced: true })),
+    ],
+  },
+  {
+    id: 'review',
+    title: 'Review & submit',
+    short: 'Review',
+    type: 'review',
+    questions: [
+      { id: 'secContact', type: 'section', label: 'How should we reach you?' },
+      Q.contactName, Q.email, Q.phone, Q.contactMethod,
+    ],
+  },
+];

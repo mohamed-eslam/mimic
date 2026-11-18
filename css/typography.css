@@ -1,6 +1,6 @@
 /* ==========================================================================
    Typography — applies the role scale from tokens.css (--fs-*, --lh-*) to
-   components in one place. Fonts: Manrope (English), Alexandria (Arabic).
+   components in one place. Fonts: Manrope (English), IBM Plex Sans Arabic (Arabic).
    Sizes are fluid (clamp) — no per-breakpoint font overrides needed.
    ========================================================================== */
 
@@ -10,32 +10,41 @@ body { font-size: var(--fs-body); line-height: var(--lh-body); }
 .hero-b__title, .display {
   font-size: var(--fs-hero);
   line-height: var(--lh-hero);
+  font-weight: var(--fw-display);
 }
 .page-hero__title, .wizard-head__title, .scaffold__title, main .page-header__title {
   font-size: var(--fs-h1);
   line-height: var(--lh-h1);
+  font-weight: var(--fw-heading);
+  letter-spacing: var(--tracking-tight);
 }
-.section-head__title, .final-cta__title {
+.section-head__title, .final-cta__title, .status-split__title, .closing__title {
   font-size: var(--fs-h2);
   line-height: var(--lh-h2);
+  font-weight: var(--fw-heading);
+  letter-spacing: var(--tracking-tight);
 }
 .wz-step__title, .talent-detail__name, .dialog__title, .finder__card h2, .likeness__title,
 .contact-form__title, .wz-success h2, .soon__alt p {
   font-size: var(--fs-title);
   line-height: var(--lh-title);
+  font-weight: var(--fw-heading);
 }
 /* Card titles */
 .way-card__title, .audience-card__title, .package-card__title, .talent-card__name, .int-option h2,
 .card__title, .use-card__title, .contact-option h2, .uses-col h3, .avail__col h3, .int-band .int-path h3,
-.offer-item h3, .step-b__title {
+.offer-item h3, .step-b__title, .vcard__title, .story__title, .status-split__soon-title, .mcard__name {
   font-size: var(--fs-h3);
   line-height: var(--lh-h3);
+  font-weight: var(--fw-heading);
+  letter-spacing: 0;
 }
 /* Small card titles */
 .int-area h3, .service-line h3, .wz-review__section h3,
 .soon__planned h2, .brief-preview__title, .wz-result h3, .finder__q legend, .talent-detail__paths-title {
   font-size: var(--fs-h4);
   line-height: var(--lh-h3);
+  font-weight: var(--fw-semibold);
 }
 
 /* ---------- Running text ---------- */
@@ -59,7 +68,7 @@ body { font-size: var(--fs-body); line-height: var(--lh-body); }
 }
 .input, .select, .textarea { font-size: var(--fs-input); }
 .btn { line-height: var(--lh-ui); }
-.btn--sm, .pref-btn { font-size: var(--fs-label); }
+.pref-btn { font-size: var(--fs-label); }
 .site-footer__link, .site-footer__brand p { line-height: var(--lh-lead); }
 /* 16px inputs also prevent iOS Safari from zooming on focus */
 .input, .select, .textarea { line-height: var(--lh-ui); }
@@ -93,16 +102,13 @@ body { font-size: var(--fs-body); line-height: var(--lh-body); }
 .section-head { margin-block-end: var(--space-8); }
 @media (max-width: 719px) { .section-head { margin-block-end: var(--space-6); } }
 
-/* ---------- Arabic refinements ---------- */
-:lang(ar) .eyebrow { font-size: var(--fs-label); font-weight: var(--weight-semibold); }
-:lang(ar) .hero-b__title, :lang(ar) .page-hero__title, :lang(ar) .section-head__title { font-weight: var(--weight-bold); }
-:lang(ar) .btn { font-weight: var(--weight-semibold); }
+/* ---------- Arabic refinements (weights come from --fw-* tokens; no tracking) ---------- */
+:lang(ar) .eyebrow { font-size: var(--fs-label); font-weight: var(--fw-semibold); letter-spacing: 0; text-transform: none; }
+:lang(ar) .btn { font-weight: var(--fw-semibold); }
+:lang(ar) :is(h1, h2, h3, h4, .btn, .chip, .badge, .eyebrow) { letter-spacing: 0; }
 /* Wrapped Arabic headings: never clip ascenders/descenders */
 :lang(ar) .hero-b__title, :lang(ar) .section-head__title, :lang(ar) .final-cta__title { overflow: visible; padding-block: 0.05em; }
 
-/* Narrow cards: name and badge stack instead of overflowing */
-.talent-card__head { flex-wrap: wrap; row-gap: var(--space-1); }
-.talent-card__name { min-width: 0; overflow-wrap: anywhere; }
 
 /* Placeholder tag may sit on narrow cards: wrap rather than be clipped by the card */
 .cmedia__tag { max-width: calc(100% - var(--space-4)); white-space: normal; line-height: 1.3; text-align: center; }

@@ -14,27 +14,19 @@
 .cl-char[data-interactive]:focus-visible { outline: 3px solid var(--color-focus); }
 /* Dark panels: light focus ring so it stays ≥3:1 */
 .site-section--dark :focus-visible, .site-footer :focus-visible, .int-option--primary :focus-visible,
-.soon__alt :focus-visible, .int-path--primary:focus-visible { outline-color: #9be3bb; }
+.soon__alt :focus-visible, .int-path--primary:focus-visible { outline-color: #ffffff; }
 /* Proxy focus for visually hidden native inputs */
 .switch input:focus-visible + .switch__track,
-.wz-drop:focus-within,
 .swatch--custom:focus-within { box-shadow: none; outline: 3px solid var(--color-focus); outline-offset: 2px; }
 
 /* ---------- 1.4.11 Non-text Contrast: control boundaries ≥ 3:1 ---------- */
 .input, .select, .textarea,
-.chip, .wz-option, .wz-check, .pref-btn, .tab,
-.wz-color input, .wz-drop, .option { border-color: var(--color-border-control); }
+.chip, .pref-btn, .tab, .option { border-color: var(--color-border-control); }
 .input:hover, .select:hover, .textarea:hover { border-color: var(--color-text-muted); }
-.wz-option__check { border-color: var(--color-border-control); }
 .switch__track { background: var(--color-border-control); }
-.btn--secondary { --btn-border: var(--color-border-control); }
 .input::placeholder, .textarea::placeholder { color: var(--color-text-subtle); opacity: 1; }
 
 /* ---------- 1.4.1 Use of Color: selected states also change shape/icon ---------- */
-.wz-option[aria-checked="true"] { border-color: var(--color-selected-border); border-width: 2px; background: var(--color-selected-bg); }
-.wz-options--chips .wz-option__check { display: grid; width: 18px; height: 18px; border: 0; }
-.wz-options--chips .wz-option[aria-checked="false"] .wz-option__check { display: none; }
-.wz-options--chips .wz-option[aria-checked="true"] .wz-option__check { background: transparent; color: currentColor; }
 .chip[aria-pressed="true"]::before, .chip[aria-checked="true"]::before {
   content: "";
   inline-size: 0.5em;
@@ -45,22 +37,17 @@
   transform: rotate(45deg) translateY(-1px);
 }
 [dir="rtl"] .chip[aria-pressed="true"]::before { transform: rotate(45deg) scaleX(-1) translateY(-1px); }
-.wz-progress__step.is-current { text-decoration: underline; text-underline-offset: 3px; }
-.site-nav__link[aria-current="page"], .app-nav__link[aria-current="page"], .drawer-nav__link[aria-current="page"] {
-  box-shadow: inset 0 -2px 0 currentColor;
-}
+/* Current page is shown by shape (outlined pill / side bar), not by color alone */
+.drawer-nav__link[aria-current] { box-shadow: inset 0 -2px 0 currentColor; }
 .app-nav__link[aria-current="page"] { box-shadow: inset 3px 0 0 currentColor; }
 [dir="rtl"] .app-nav__link[aria-current="page"] { box-shadow: inset -3px 0 0 currentColor; }
 
 /* ---------- 2.5.8 Target Size (Minimum 24×24) ---------- */
-.wz-progress__step { min-height: 32px; padding-inline: 12px; }
-.wz-color__remove { inline-size: 24px; block-size: 24px; }
-.filter .chip { min-height: 36px; }
 .site-footer__link, .link-arrow { display: inline-flex; min-height: 24px; align-items: center; }
 .cmedia__tag { pointer-events: none; }
 
 /* ---------- 1.4.12 Text Spacing / 1.4.4 Resize: no clipped text in fixed heights ---------- */
-.btn { height: auto; min-height: var(--btn-h); padding-block: var(--space-2); white-space: normal; text-align: center; }
+/* .btn uses min-height + wrapping text (components.css) so labels never clip */
 .pref-btn { height: auto; min-height: 38px; }
 .tab { height: auto; min-height: var(--control-h-sm); }
 .input { height: auto; min-height: var(--control-h); padding-block: var(--space-2); }
@@ -82,7 +69,7 @@ input[type="email"], input[type="url"], input[type="tel"] { direction: ltr; }
 @media (prefers-reduced-motion: reduce) {
   .talent-strip__item .cmedia, .cmedia__img, .float-chip, .spec-chip { animation: none !important; }
   .reveal-ready [data-reveal] { opacity: 1 !important; translate: none !important; }
-  .talent-card:hover, .way-card:hover, .audience-card:hover, .int-path:hover,
+  .way-card:hover, .audience-card:hover, .int-path:hover, .mcard__link:hover .cmedia,
   .talent-strip__item:hover .cmedia, .card--interactive:hover { transform: none !important; }
   .talent-strip__item--1 { translate: none; }
 }
@@ -102,30 +89,8 @@ input[type="email"], input[type="url"], input[type="tel"] { direction: ltr; }
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23b7c5bb' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
 }
 
-/* 1.4.12 Text Spacing: the header wraps instead of pushing actions off-screen */
-.site-header__inner { flex-wrap: wrap; row-gap: var(--space-2); padding-block: var(--space-2); }
-.site-nav ul, .site-header__actions { flex-wrap: wrap; }
-.site-nav { flex: 0 1 auto; min-width: 0; }
-.site-header__actions { margin-inline-start: auto; }
-/* The header container is capped at 1200px, so the header Contact link never fits alongside
-   the nav; Contact stays reachable from the hero, footer and the menu drawer. */
-.site-header__actions .btn--ghost { display: none; }
-/* Below 1280px the primary nav moves into the menu drawer (keeps one clean header row) */
-@media (max-width: 1279px) {
-  .site-nav { display: none; }
-  .site-header .menu-toggle { display: inline-flex; margin-inline-start: 0; }
-}
-
-/* Header fits one row: tighter spacing; compact language label below 1360px */
-.site-header__inner { column-gap: var(--space-4); }
-.site-nav { margin-inline-start: var(--space-2); }
-.site-nav__link { padding-inline: 10px; }
+/* 1.4.12 Text Spacing: header nav and actions wrap instead of clipping (see layout.css) */
 .pref-btn__short { display: none; }
-
-
-/* Header language switch uses the short label (full name is in aria-label + title) */
-.site-header .pref-btn__long { display: none; }
-.site-header .pref-btn__short { display: inline; }
 
 /* ---------- Studio (workspace) surfaces: designed dark variants (1.4.3) ----------
    Translucent white "glass" was carrying light-theme assumptions into dark mode. */
@@ -133,8 +98,8 @@ input[type="email"], input[type="url"], input[type="tel"] { direction: ltr; }
 .scene-tile span { background: var(--color-surface); color: var(--color-text); }
 .speech { color: var(--brand-ink); }                       /* bubble is always white */
 :root[data-theme="dark"] .glass {
-  background: rgb(16 23 19 / 0.84);
-  border-color: rgb(245 247 245 / 0.16);
+  background: rgb(17 17 16 / 0.84);
+  border-color: rgb(245 245 242 / 0.16);
   color: var(--color-text);
 }
 :root[data-theme="dark"] .nameplate.is-placeholder { color: var(--color-text-muted); }

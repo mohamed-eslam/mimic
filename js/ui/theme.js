@@ -7,7 +7,7 @@
  * - Switching adds a short-lived `theme-transition` class (disabled for reduced motion).
  */
 export const THEME_KEY = 'character-lab:theme';
-const META_COLORS = { light: '#F8FAF9', dark: '#101713' };
+const META_COLORS = { light: '#F8F8F7', dark: '#111110' };
 const systemQuery = window.matchMedia?.('(prefers-color-scheme: dark)');
 
 export const getTheme = () => (document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light');

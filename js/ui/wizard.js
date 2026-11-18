@@ -3,11 +3,14 @@
  *
  * Schema:
  *   { id, title, requestType(answers) → string, steps: [Step], prefill?(query) → answers }
- *   Step: { id, title, intro?, showIf?(a, ctx), questions: [Q] }  |  { id, title, type: 'review' }
- *   Q: { id, type, label, hint?, summaryLabel?, required?, showIf?(a, ctx),
- *        options?: [{ value, label, desc?, icon? }], multiple?, max?, other?,  // choice types
+ *   Step: { id, title, intro?, showIf?(a, ctx), questions: [Q] }  |  { id, title, type: 'review', questions?: [Q] }
+ *         (a review step may carry its own questions, e.g. contact details, shown above the summary)
+ *   Q: { id, type, label, hint?, summaryLabel?, required?, showIf?(a, ctx), advanced?,
+ *        options?: [{ value, label, desc?, icon?, image? }], multiple?, max?, other?,  // choice types
  *        placeholder?, accept?, maxFiles?, tone? }
- *   Types: cards | chips | list | text | email | tel | url | textarea | select | colors | files | consent | note | readonly
+ *   Types: cards | chips | list | text | email | tel | url | textarea | select | colors | files | consent | note | readonly | section
+ *   advanced: optional questions grouped under a collapsed "More details" disclosure at the end of the step
+ *   image: a choice option rendered as a visual card (character style etc.)
  *
  * All interface text comes from the i18n dictionary (wizard.*); question text
  * comes from the (localized) schema. User-entered values are wrapped in <bdi>
@@ -31,7 +34,7 @@ const bdi = (v) => `<bdi>${escapeHtml(v)}</bdi>`;
 
 export function mountWizard(root, schema, { query } = {}) {
   const draftKey = `character-lab:draft:${schema.id}`;
-  const state = { step: 0, answers: {}, files: {}, errors: {}, result: null, sending: false };
+  const state = { step: 0, answers: {}, files: {}, errors: {}, result: null, sending: false, animate: true, moreOpen: {} };
   const objectUrls = new Set();
   const allQuestions = schema.steps.flatMap((s) => s.questions ?? []);
 
@@ -68,14 +71,13 @@ export function mountWizard(root, schema, { query } = {}) {
     }
     return a[q.id] ?? '';
   }
-  const answeredRows = (step) => visibleQs(step).filter((q) => q.type !== 'note').map((q) => ({ q, value: formatAnswer(q) })).filter((r) => r.value);
+  const answeredRows = (step) => visibleQs(step).filter((q) => q.type !== 'note' && q.type !== 'section').map((q) => ({ q, value: formatAnswer(q) })).filter((r) => r.value);
 
   /** Structured plain-text brief for the operations team. */
   function briefText(ref) {
     const lines = [schema.title.toUpperCase(), ref ? t('wizard.reference', { ref }) : null, t('wizard.prepared', { date: new Date().toLocaleString() }), ''].filter((l) => l !== null);
     for (const step of visibleSteps()) {
-      if (step.type === 'review') continue;
-      const rows = answeredRows(step);
+      const rows = answeredRows(step); // review steps contribute their own questions (e.g. contact details)
       if (!rows.length) continue;
       lines.push(`== ${step.title} ==`);
       rows.forEach(({ q, value }) => lines.push(`- ${q.summaryLabel ?? q.label}: ${value}`));
@@ -107,7 +109,10 @@ export function mountWizard(root, schema, { query } = {}) {
     const a = state.answers;
     const err = state.errors[q.id];
     const errId = `${q.id}-err`;
-    const label = `${escapeHtml(q.label)}${q.required ? ' <span class="wz-req" aria-hidden="true">*</span>' : ` <span class="wz-opt">${t('wizard.optional')}</span>`}`;
+    // Inside "More details (optional)" every field is optional by context — no per-field tag.
+    const label = `${escapeHtml(q.label)}${q.required ? ' <span class="wz-req" aria-hidden="true">*</span>' : q.advanced ? '' : ` <span class="wz-opt">${t('wizard.optional')}</span>`}`;
+
+    if (q.type === 'section') return `<h3 class="wz-section">${escapeHtml(q.label)}</h3>`;
     const hint = q.hint ? `<p class="wz-hint">${escapeHtml(q.hint)}</p>` : '';
     const error = err ? `<p class="wz-error" id="${errId}" role="alert">${escapeHtml(err)}</p>` : '';
     // 3.3.1 / 4.1.2: invalid state + error text programmatically tied to the control
@@ -122,7 +127,7 @@ export function mountWizard(root, schema, { query } = {}) {
     }
 
     if (CHOICE.has(q.type)) {
-      const opts = [...q.options, ...(q.other ? [{ value: OTHER, label: t('wizard.other'), icon: 'edit' }] : [])];
+      const opts = [...q.options, ...(q.other ? [{ value: OTHER, label: t('wizard.otherShort'), other: true }] : [])];
       const selected = arr(a[q.id]);
       const role = q.multiple ? 'checkbox' : 'radio';
       const otherErr = state.errors[`${q.id}${OTHER}`];
@@ -131,10 +136,10 @@ export function mountWizard(root, schema, { query } = {}) {
         <fieldset class="wz-q" data-q="${q.id}">
           <legend class="wz-label">${label}</legend>
           ${multiHint}
-          <div class="wz-options wz-options--${q.type}" role="${q.multiple ? 'group' : 'radiogroup'}" aria-label="${escapeHtml(q.label)}" ${q.multiple ? '' : req} ${describedBy}>
+          <div class="wz-options wz-options--${q.type} ${opts.some((o) => o.image) ? 'wz-options--visual' : ''}" role="${q.multiple ? 'group' : 'radiogroup'}" aria-label="${escapeHtml(q.label)}" ${q.multiple ? '' : req} ${describedBy}>
             ${opts.map((o) => `
-              <button type="button" class="wz-option" role="${role}" aria-checked="${selected.includes(o.value)}" data-q="${q.id}" data-value="${escapeHtml(o.value)}">
-                ${o.icon ? `<span class="wz-option__icon">${icon(o.icon)}</span>` : ''}
+              <button type="button" class="wz-option ${o.other ? 'wz-option--other' : ''}" role="${role}" ${o.other ? `aria-label="${escapeHtml(t('wizard.other'))}"` : ''} aria-checked="${selected.includes(o.value)}" data-q="${q.id}" data-value="${escapeHtml(o.value)}">
+                ${o.other ? `<span class="wz-option__pen" aria-hidden="true">${icon('edit', { size: 14 })}</span>` : ''}${o.image ? `<span class="wz-option__media"><img src="${escapeHtml(o.image)}" alt="" loading="lazy" decoding="async"></span>` : o.icon ? `<span class="wz-option__icon">${icon(o.icon)}</span>` : ''}
                 <span class="wz-option__text"><span class="wz-option__label">${escapeHtml(o.label)}</span>${o.desc ? `<span class="wz-option__desc">${escapeHtml(o.desc)}</span>` : ''}</span>
                 <span class="wz-option__check" aria-hidden="true">${icon('check')}</span>
               </button>`).join('')}
@@ -189,7 +194,8 @@ export function mountWizard(root, schema, { query } = {}) {
     return `<div class="wz-q"><label class="wz-label" for="${id}">${label}</label>${hint}<input class="input" id="${id}" type="${type}" ${ltr} data-field="${q.id}" value="${escapeHtml(a[q.id] ?? '')}" placeholder="${escapeHtml(q.placeholder ?? '')}" autocomplete="${auto}" ${req} ${describedBy}>${error}</div>`;
   }
 
-  function renderReview() {
+  function renderReview(step) {
+    const own = visibleQs(step);
     const sections = visibleSteps().filter((s) => s.type !== 'review').map((s, i) => {
       const rows = answeredRows(s);
       return `
@@ -200,6 +206,7 @@ export function mountWizard(root, schema, { query } = {}) {
     }).join('');
     return `
       <div class="wz-review">
+        ${own.length ? `<div class="wz-review__form">${renderQuestions(step, own)}</div>` : ''}
         <p class="wz-review__intro">${t('wizard.reviewIntro')}</p>
         <div class="wz-review__doc"><h2 class="wz-review__title">${escapeHtml(schema.title)}</h2>${sections}</div>
         <div class="wz-q"><label class="wz-label" for="wz-finalNotes">${t('wizard.finalNotes')} <span class="wz-opt">${t('wizard.optional')}</span></label>
@@ -257,16 +264,15 @@ export function mountWizard(root, schema, { query } = {}) {
       <div class="wizard">
         <div class="wizard__main">
           <nav class="wz-progress" aria-label="${t('wizard.progress')}">
-            <div class="wz-progress__bar"><span style="width:${((state.step + 1) / steps.length) * 100}%"></span></div>
-            <p class="wz-progress__label">${t('wizard.stepOf', { n: state.step + 1, total: steps.length })}</p>
-            <ol class="wz-progress__steps" role="list">
-              ${steps.map((s, i) => `<li><button type="button" class="wz-progress__step ${i === state.step ? 'is-current' : ''} ${i < state.step ? 'is-done' : ''}" data-goto="${i}" ${i > state.step ? 'disabled' : ''} ${i === state.step ? 'aria-current="step"' : ''}>${escapeHtml(s.short ?? s.title)}</button></li>`).join('')}
+            <p class="visually-hidden">${t('wizard.stepOf', { n: state.step + 1, total: steps.length })}</p>
+            <ol class="wz-progress__steps" role="list" style="--steps:${steps.length}">
+              ${steps.map((s, i) => `<li class="${i < state.step ? 'is-done' : ''} ${i === state.step ? 'is-current' : ''}"><button type="button" class="wz-progress__step" data-goto="${i}" ${i > state.step ? 'disabled' : ''} ${i === state.step ? 'aria-current="step"' : ''}><span class="wz-progress__num" aria-hidden="true">${i < state.step ? icon('check', { size: 12 }) : i + 1}</span><span class="wz-progress__name">${escapeHtml(s.short ?? s.title)}</span></button></li>`).join('')}
             </ol>
           </nav>
-          <section class="wz-step" aria-labelledby="wz-step-title">
+          <section class="wz-step ${state.animate ? 'wz-step--enter' : ''}" aria-labelledby="wz-step-title">
             <h2 class="wz-step__title" id="wz-step-title" tabindex="-1">${escapeHtml(step.title)}</h2>
             ${step.intro ? `<p class="wz-step__intro">${escapeHtml(step.intro)}</p>` : ''}
-            <div class="wz-step__body">${step.type === 'review' ? renderReview() : visibleQs(step).map(renderQuestion).join('')}</div>
+            <div class="wz-step__body">${step.type === 'review' ? renderReview(step) : renderQuestions(step, visibleQs(step))}</div>
           </section>
           <div class="wz-nav">
             <button type="button" class="btn btn--secondary" data-back ${state.step === 0 ? 'disabled' : ''}>${icon('arrowRight', { className: 'flip-rtl-reverse' })}<span>${t('wizard.back')}</span></button>
@@ -276,13 +282,26 @@ export function mountWizard(root, schema, { query } = {}) {
               : `<button type="button" class="btn btn--primary" data-next><span>${t('wizard.next')}</span>${icon('arrowRight', { className: 'flip-rtl' })}</button>`}
           </div>
         </div>
-        <aside class="wizard__summary" aria-label="${t('wizard.summaryLabel')}">
-          <h2 class="wz-summary__title">${icon('brief')} ${t('wizard.summaryTitle')}</h2>
-          <div data-summary>${renderSummary()}</div>
-        </aside>
       </div>`;
+    state.animate = false;
   }
 
+  /** Main questions, then optional ones folded into a "More details" disclosure. */
+  function renderQuestions(step, qs) {
+    const main = qs.filter((q) => !q.advanced);
+    const extra = qs.filter((q) => q.advanced);
+    if (!extra.length) return main.map(renderQuestion).join('');
+    const filled = extra.filter((q) => q.type !== 'note' && q.type !== 'section' && formatAnswer(q)).length;
+    const hasError = extra.some((q) => state.errors[q.id] || state.errors[`${q.id}${OTHER}`]);
+    const open = hasError || (state.moreOpen[step.id] ?? filled > 0);
+    return `${main.map(renderQuestion).join('')}
+      <details class="wz-more" data-more="${escapeHtml(step.id)}" ${open ? 'open' : ''}>
+        <summary class="wz-more__toggle"><span>${t('wizard.moreDetails')}</span>${filled ? `<span class="wz-more__count">${t('wizard.moreAdded', { n: filled })}</span>` : ''}${icon('arrowRight', { size: 16, className: 'wz-more__chev' })}</summary>
+        <div class="wz-more__body">${extra.map(renderQuestion).join('')}</div>
+      </details>`;
+  }
+
+  // The sidebar summary was removed (review step holds the full summary); kept for reference/tests.
   function renderSummary() {
     const blocks = visibleSteps().filter((s) => s.type !== 'review').map((s) => {
       const rows = answeredRows(s);
@@ -291,7 +310,7 @@ export function mountWizard(root, schema, { query } = {}) {
     }).join('');
     return blocks || `<p class="wz-hint">${t('wizard.summaryEmpty')}</p>`;
   }
-  const refreshSummary = () => { const el = root.querySelector('[data-summary]'); if (el) el.innerHTML = renderSummary(); };
+  const refreshSummary = () => {};
 
   /** Re-render the current step body, keeping focus on the same control. */
   function rerenderKeepFocus() {
@@ -305,6 +324,7 @@ export function mountWizard(root, schema, { query } = {}) {
   function goTo(i, { focus = true } = {}) {
     state.step = i;
     state.errors = {};
+    state.animate = true;
     render();
     if (focus) {
       root.querySelector('#wz-step-title')?.focus();
@@ -325,9 +345,12 @@ export function mountWizard(root, schema, { query } = {}) {
   async function submit() {
     const steps = visibleSteps();
     for (let i = 0; i < steps.length; i++) {
-      if (steps[i].type === 'review') continue;
-      const errors = validateStep(steps[i]);
-      if (Object.keys(errors).length) { goTo(i); state.errors = errors; render(); return; }
+      const errors = validateStep(steps[i]); // includes questions on the review step (contact details)
+      if (Object.keys(errors).length) {
+        goTo(i, { focus: false }); state.errors = errors; render();
+        root.querySelector('.wz-error')?.closest('.wz-q, .wz-other')?.querySelector('button, input, textarea, select')?.focus();
+        return;
+      }
     }
     state.sending = true;
     render();
@@ -369,7 +392,15 @@ export function mountWizard(root, schema, { query } = {}) {
     all[(all.indexOf(btn) + delta + all.length) % all.length].focus();
   }));
   offs.push(on(root, 'input', '[data-field]', (e, el) => {
-    state.answers[el.dataset.field] = el.type === 'checkbox' ? el.checked : el.value;
+    const key = el.dataset.field;
+    state.answers[key] = el.type === 'checkbox' ? el.checked : el.value;
+    // Validation only when relevant: once the field has a value, drop its error in place.
+    if (state.errors[key] && !isEmpty(state.answers[key])) {
+      delete state.errors[key];
+      el.removeAttribute('aria-invalid');
+      el.removeAttribute('aria-describedby');
+      root.querySelector(`#${CSS.escape(key)}-err`)?.remove();
+    }
     persist();
     refreshSummary();
   }));
@@ -381,7 +412,7 @@ export function mountWizard(root, schema, { query } = {}) {
     persist();
     refreshSummary();
   }));
-  offs.push(on(root, 'click', '[data-color-add]', (_, b) => { state.answers[b.dataset.colorAdd] = [...arr(state.answers[b.dataset.colorAdd]), '#29245c']; persist(); rerenderKeepFocus(); }));
+  offs.push(on(root, 'click', '[data-color-add]', (_, b) => { state.answers[b.dataset.colorAdd] = [...arr(state.answers[b.dataset.colorAdd]), '#141413']; persist(); rerenderKeepFocus(); }));
   offs.push(on(root, 'click', '[data-color-remove]', (_, b) => { const l = arr(state.answers[b.dataset.colorRemove]); l.splice(+b.dataset.index, 1); state.answers[b.dataset.colorRemove] = l; persist(); render(); }));
   offs.push(on(root, 'change', '[data-files]', (_, input) => {
     const qid = input.dataset.files;
@@ -405,6 +436,7 @@ export function mountWizard(root, schema, { query } = {}) {
     if (removed?.__url) URL.revokeObjectURL(removed.__url);
     render();
   }));
+  offs.push(on(root, 'toggle', '[data-more]', (_, d) => { state.moreOpen[d.dataset.more] = d.open; }, true));
   offs.push(on(root, 'click', '[data-goto]', (_, b) => goTo(+b.dataset.goto)));
   offs.push(on(root, 'click', '[data-back]', () => goTo(Math.max(0, state.step - 1))));
   offs.push(on(root, 'click', '[data-next]', () => next()));

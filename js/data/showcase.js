@@ -1,27 +1,19 @@
 /**
- * Showcase cast — characters used ONLY in illustrative product scenes (homepage use cases).
+ * Showcase cast — the characters used in the homepage's illustrative product scenes.
  *
- * Milo and Nova are not marketplace listings: they are not for sale as-is, and their
- * scenes link to the custom-character request instead. Adam reuses his catalog artwork.
- * Image files keep their original names in assets/characters/ (see README there).
+ * Adam, Milo and Nova are catalog listings; this module only picks what the homepage
+ * scenes need (name + portrait), so artwork lives in one place (js/data/catalog.js).
  */
 import { findListing } from './catalog.js';
 
-const file = (name) => `assets/characters/${encodeURIComponent(name)}`;
+/** Name + portrait from the catalog (single source of truth for artwork). */
+const fromCatalog = (id) => {
+  const l = findListing(id);
+  return { name: l?.name ?? { en: id, ar: id }, image: l?.media?.image ?? null };
+};
 
 export const SHOWCASE = {
-  adam: {
-    name: findListing('adam')?.name ?? { en: 'Adam', ar: 'آدم' },
-    image: findListing('adam')?.media?.image ?? null,
-  },
-  milo: {
-    name: { en: 'Milo', ar: 'ميلو' },
-    style: 'stylized-3d',
-    image: file('magnific_premium-stylized-3d-egyptian-male-character_LwBXvCuswO.png'),
-  },
-  nova: {
-    name: { en: 'Nova', ar: 'نوفا' },
-    style: 'near-human',
-    image: file('magnific_premium-photorealistic-nearhuman_bxT0XgK5Y2.png'),
-  },
+  adam: fromCatalog('adam'),
+  milo: fromCatalog('milo'),
+  nova: fromCatalog('nova'),
 };

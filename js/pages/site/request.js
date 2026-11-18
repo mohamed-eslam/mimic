@@ -19,7 +19,7 @@ function wizardPage({ schema, eyebrow, title, lead }) {
         <section class="site-section site-section--compact">
           <div class="container">
             <header class="wizard-head">
-              <p class="eyebrow">${eyebrow()}</p>
+              <p class="eyebrow eyebrow--pill">${eyebrow()}</p>
               <h1 class="wizard-head__title">${title()}</h1>
               <p class="wizard-head__lead">${lead()}</p>
               ${isSubmissionConfigured() ? '' : `<p class="notice notice--info wizard-head__demo" data-demo-mode>${icon('info')}<span>${t('wizard.demoMode')}</span></p>`}

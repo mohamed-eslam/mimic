@@ -20,26 +20,34 @@
  *           plain backdrop: only empty backdrop is trimmed, never the person);
  *           'contain' (default) for transparent cutouts
  *   focus → object-position for cover framing (default 'center top')
- *   loop  → optional short, silent looping clip (none supplied yet)
+ *   video → optional real talking-character clip (muted loop, played by ui/character-video.js);
+ *           the portrait stays as poster + fallback. Only files verified frame-by-frame.
  *
  * Filter values are keys; their display labels live in the i18n dictionaries
  * (catalog.values.*), so filters and cards are fully bilingual.
  */
+/** Primary category (character type). Shown as the main segmented filter. */
+export const KINDS = ['realistic', 'humanlike', 'cartoon3d', 'mascot'];
+
 export const FILTERS = {
   market: ['saudi', 'egyptian', 'international'],
   style: ['professional', 'corporate', 'friendly', 'casual'],
   presentation: ['female', 'male'],
-  useCase: ['website-assistant', 'ai-agent', 'customer-service', 'marketing', 'presenter'],
+  useCase: ['website-assistant', 'app-assistant', 'ai-agent', 'customer-service', 'marketing', 'presenter'],
 };
 
 export const POSES = ['front', 'welcome', 'pointing', 'explaining', 'thinking'];
 export const EXPRESSIONS = ['neutral', 'smile', 'thinking', 'surprised'];
 
 /** Supplied studio portraits (1376×768, plain backdrop). Original filenames preserved. */
-const photo = (file, focus) => ({ image: `assets/characters/${encodeURIComponent(file)}`, fit: 'cover', ...(focus ? { focus } : {}) });
+const asset = (file) => `assets/characters/${encodeURIComponent(file)}`;
+const photo = (file, { focus, video } = {}) => ({
+  image: asset(file), fit: 'cover', ...(focus ? { focus } : {}), ...(video ? { video: asset(video) } : {}),
+});
 
 const character = (def) => ({
   sample: true,
+  kind: 'realistic',
   expressions: ['neutral', 'smile'],
   customization: { available: [], notAvailable: ['face'] },
   ...def,
@@ -49,7 +57,7 @@ const character = (def) => ({
 export const CATALOG = [
   character({
     id: 'faisal',
-    media: photo('magnific_premium-photorealistic-aigenerated-saudi_6AHF1WNiJO.png'),
+    media: photo('magnific_premium-photorealistic-aigenerated-saudi_6AHF1WNiJO.png', { video: 'magnific_animate-the-exact-character_ksDqrda16B.mp4' }),
     name: { en: 'Faisal', ar: 'فيصل' },
     title: { en: 'Corporate host in traditional attire', ar: 'مضيف رسمي بالزي التقليدي' },
     description: {
@@ -65,7 +73,7 @@ export const CATALOG = [
   }),
   character({
     id: 'reem',
-    media: photo('magnific_she-should-have-distinctive-natural-facial-features_tCi6G7vmZJ.png'),
+    media: photo('magnific_she-should-have-distinctive-natural-facial-features_tCi6G7vmZJ.png', { video: 'magnific_animate-the-exact-character_bxTQkJL5Y2.mp4' }),
     name: { en: 'Reem', ar: 'ريم' },
     title: { en: 'Business consultant', ar: 'مستشارة أعمال' },
     description: {
@@ -81,7 +89,7 @@ export const CATALOG = [
   }),
   character({
     id: 'karim',
-    media: photo('magnific_he-should-look_ksDMoXo16B.png'),
+    media: photo('magnific_he-should-look_ksDMoXo16B.png', { video: 'magnific_video-generator_cplz7IH0eP.mp4' }),
     name: { en: 'Karim', ar: 'كريم' },
     title: { en: 'Business professional', ar: 'رجل أعمال' },
     description: {
@@ -96,6 +104,7 @@ export const CATALOG = [
   }),
   character({
     id: 'nour',
+    media: photo('magnific_premium-photorealistic-aigenerated-egyptian_u5nzVmXQLD.png', { video: 'magnific_video-generator_Ebzv0qbuuO.mp4' }),
     name: { en: 'Nour', ar: 'نور' },
     title: { en: 'Customer service representative', ar: 'ممثلة خدمة عملاء' },
     description: {
@@ -126,7 +135,7 @@ export const CATALOG = [
   }),
   character({
     id: 'lina',
-    media: photo('magnific_premium-photorealistic-aigenerated-egyptian_s7oBmBBl8e.png'),
+    media: photo('magnific_premium-photorealistic-aigenerated-egyptian_s7oBmBBl8e.png', { video: 'magnific_video-generator_huR8zyWvqL.mp4' }),
     name: { en: 'Lina', ar: 'لينا' },
     title: { en: 'Digital presenter', ar: 'مقدّمة محتوى رقمي' },
     description: {
@@ -157,7 +166,7 @@ export const CATALOG = [
   }),
   character({
     id: 'salma',
-    media: photo('magnific_she-should-look_1lpDovir4r.png'),
+    media: photo('magnific_she-should-look_1lpDovir4r.png', { video: 'magnific_animate-the-exact-character_If6XhiztvE.mp4' }),
     name: { en: 'Salma', ar: 'سلمى' },
     title: { en: 'Lifestyle & social host', ar: 'مقدّمة محتوى لايف ستايل' },
     description: {
@@ -170,6 +179,40 @@ export const CATALOG = [
     poses: ['front', 'welcome', 'pointing'],
     expressions: ['neutral', 'smile', 'surprised'],
     customization: { available: ['name', 'poses', 'background', 'outfitColor'], notAvailable: ['face'] },
+  }),
+  character({
+    id: 'nova',
+    kind: 'humanlike',
+    media: photo('magnific_premium-photorealistic-nearhuman_bxT0XgK5Y2.png'),
+    name: { en: 'Nova', ar: 'نوفا' },
+    title: { en: 'Digital presenter', ar: 'مقدّمة رقمية' },
+    description: {
+      en: 'A near-human digital presenter for product tours, announcements and explainers.',
+      ar: 'مقدّمة رقمية شبه بشرية لجولات المنتج والإعلانات والشروحات.',
+    },
+    market: 'international', style: 'professional', presentation: 'female', ageRange: '30s',
+    personality: ['professional', 'calm'],
+    useCases: ['presenter', 'marketing'],
+    poses: ['front'],
+    expressions: ['smile'],
+    customization: { available: ['name', 'background'], notAvailable: ['face'] },
+  }),
+  character({
+    id: 'milo',
+    kind: 'cartoon3d',
+    media: photo('magnific_premium-stylized-3d-egyptian-male-character_LwBXvCuswO.png', { video: 'magnific_video-generator_UPmsORHwny.mp4' }),
+    name: { en: 'Milo', ar: 'ميلو' },
+    title: { en: 'In-app assistant', ar: 'مساعد داخل التطبيق' },
+    description: {
+      en: 'A friendly stylized 3D guide for onboarding and in-app help.',
+      ar: 'مرشد ودود بأسلوب ثلاثي الأبعاد للتعريف بالتطبيق والمساعدة داخله.',
+    },
+    market: 'egyptian', style: 'friendly', presentation: 'male', ageRange: '20s',
+    personality: ['friendly'],
+    useCases: ['app-assistant', 'customer-service'],
+    poses: ['front'],
+    expressions: ['smile'],
+    customization: { available: ['name', 'background'], notAvailable: ['face'] },
   }),
 ];
 

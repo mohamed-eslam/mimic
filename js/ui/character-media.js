@@ -8,7 +8,8 @@
  * Motion is CSS-only (float / hover) — images are never presented as able to
  * talk, blink or lip-sync.
  */
-import { escapeHtml, prefersReducedMotion } from '../core/dom.js';
+import { escapeHtml } from '../core/dom.js';
+import { icon } from './icons.js';
 import { t, pick } from '../i18n/index.js';
 import { findListing } from '../data/catalog.js';
 import { resolveAssets } from '../services/asset-service.js';
@@ -48,13 +49,22 @@ const framing = (listing) => {
 };
 
 /**
- * Silent motion preview slot — only rendered when a real loop file is configured
- * (`media.loop`) and the visitor hasn't asked for reduced motion. Never autoplays sound.
+ * Real talking-character clip layered over the portrait (`media.video`).
+ * No src until ui/character-video.js decides to load it (visible, motion allowed):
+ * preload="none", muted, inline, looping. Decorative — the <img> carries the alt text.
+ * The detail view also gets a pause/play control (always available, even under
+ * reduced motion, so visitors can opt in).
  */
-function motionTag(listing, poster) {
-  const loop = listing.media?.loop;
-  if (!loop || prefersReducedMotion()) return '';
-  return `<video class="cmedia__loop" src="${escapeHtml(loop)}" ${poster ? `poster="${escapeHtml(poster)}"` : ''} muted loop playsinline autoplay preload="none" aria-hidden="true"></video>`;
+function videoTag(listing, poster, size) {
+  const video = listing.media?.video;
+  if (!video) return '';
+  const name = escapeHtml(pick(listing.name));
+  const ctrl = size === 'detail'
+    ? `<button type="button" class="cmedia__ctrl" data-video-toggle aria-pressed="false"
+         data-label-pause="${escapeHtml(t('media.pause', { name: pick(listing.name) }))}" data-label-play="${escapeHtml(t('media.play', { name: pick(listing.name) }))}"
+         aria-label="${escapeHtml(t('media.play', { name: pick(listing.name) }))}">${icon('pause', { className: 'cmedia__ctrl-pause' })}${icon('play', { className: 'cmedia__ctrl-play' })}</button>`
+    : '';
+  return `<video class="cmedia__video" data-src="${escapeHtml(video)}" poster="${escapeHtml(poster)}" muted loop playsinline preload="none" disablepictureinpicture aria-hidden="true" tabindex="-1" data-character="${name}"></video>${ctrl}`;
 }
 
 /**
@@ -66,15 +76,22 @@ export function characterMedia(listing, { size = 'card', label = true, src = nul
   const source = src ?? (pose ? null : listing.media?.image ?? null);
   const eager = size === 'hero' || size === 'detail';
   const inner = source
-    ? imageTag(source, altText(listing), { eager, priority }) + (size === 'detail' && !pose ? motionTag(listing, source) : '')
+    ? imageTag(source, altText(listing), { eager, priority }) + (!pose && size !== 'thumb' ? videoTag(listing, source, size) : '')
     : placeholderSVG(t('media.placeholderFor', { name: pick(listing.name) }));
   const { cls, style } = source ? framing(listing) : { cls: '', style: '' };
   return `
-    <div class="cmedia cmedia--${size} ${cls} ${source ? '' : 'cmedia--placeholder'}" data-media="${escapeHtml(listing.id ?? '')}" ${pose ? `data-pose="${pose}"` : ''} ${size === 'detail' ? 'data-motion-slot' : ''} ${style}>
+    <div class="cmedia cmedia--${size} ${cls} ${source ? '' : 'cmedia--placeholder'}" data-media="${escapeHtml(listing.id ?? '')}" ${pose ? `data-pose="${pose}"` : ''} ${!pose && listing.media?.video && source ? 'data-has-video' : ''} ${style}>
       ${inner}
       ${!source && label ? `<span class="cmedia__tag">${t('media.placeholder')}</span>` : ''}
     </div>`;
 }
+
+/** Site-wide pause/play for autoplaying character motion (WCAG 2.2.2). Wired in ui/character-video.js. */
+export const motionToggle = (cls = '') => `
+  <button type="button" class="motion-toggle ${cls}" data-motion-toggle aria-pressed="true">
+    ${icon('pause', { className: 'motion-toggle__pause' })}${icon('play', { className: 'motion-toggle__play' })}
+    <span data-motion-label>${t('media.pauseAll')}</span>
+  </button>`;
 
 /** If supplied artwork fails to load, fall back to the labeled placeholder instead of a broken image. */
 function guardImages(root) {

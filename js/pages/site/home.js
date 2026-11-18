@@ -11,7 +11,8 @@ import { t, tl, pick } from '../../i18n/index.js';
 import { icon } from '../../ui/icons.js';
 import { revealOnScroll } from '../../ui/reveal.js';
 import { mountScrollStory } from '../../ui/scroll-story.js';
-import { characterMedia, hydrateCharacterMedia } from '../../ui/character-media.js';
+import { mountArcCarousel } from '../../ui/arc-carousel.js';
+import { characterMedia, hydrateCharacterMedia, motionToggle } from '../../ui/character-media.js';
 import { BUSINESS } from '../../config/business.js';
 import { findListing } from '../../data/catalog.js';
 import { btn, sectionHead, availabilityBadge } from './shared.js';
@@ -19,11 +20,10 @@ import {
   visualCard, sceneFrame, catalogScene, briefScene, integrationScene, STORY_CHAPTERS,
 } from './product-scenes.js';
 
-/* Hero: three verified portraits, centre one is the focal point. */
-const HERO_CAST = ['reem', 'adam', 'lina'];
-const FOCAL = 1;
-/* Showcase: four other marketplace characters (no repeats with the hero). */
-const SHOWCASE_CAST = ['faisal', 'karim', 'salma', 'omar'];
+/* Hero arc: every catalog character; index 5 starts in the centre (Reem). */
+const HERO_CAST = ['lina', 'faisal', 'nova', 'salma', 'milo', 'reem', 'karim', 'nour', 'omar', 'adam'];
+/* Showcase: four other characters (no repeats with the hero); Milo has a clip too. */
+const SHOWCASE_CAST = ['milo', 'adam', 'lina', 'karim'];
 
 const arrow = () => icon('arrowRight', { className: 'flip-rtl' });
 const cast = (ids) => ids.map(findListing).filter(Boolean);
@@ -35,7 +35,7 @@ function hero() {
     <section class="site-section hero-b hero-c" aria-labelledby="hero-title">
       <div class="container hero-c__inner">
         <div class="hero-c__copy" data-reveal>
-          <p class="eyebrow hero-c__eyebrow"><span class="hero-c__dot" aria-hidden="true"></span>${t('home.hero.eyebrow')}</p>
+          <p class="eyebrow eyebrow--pill">${t('home.hero.eyebrow')}</p>
           <h1 id="hero-title" class="hero-b__title">${t('home.hero.title')}</h1>
           <p class="hero-b__lead">${t('home.hero.description')}</p>
           <div class="hero-b__actions">
@@ -43,16 +43,19 @@ function hero() {
             ${btn(t('cta.createCustom'), '#/brief', 'secondary')}
           </div>
         </div>
-        <div class="hero-stage" data-reveal="1">
-          <div class="hero-stage__cast">
-            ${people.map((l, i) => `
-              <figure class="cast-card ${i === FOCAL ? 'is-focal' : ''}">
-                ${characterMedia(l, { size: 'hero', label: i === FOCAL, priority: i === FOCAL })}
-                <figcaption class="cast-card__cap"><strong>${pick(l.name)}</strong><span>${pick(l.title)}</span></figcaption>
-              </figure>`).join('')}
-          </div>
-        </div>
         ${people.some((l) => !l.media?.image) ? `<p class="hero-talent__note hero-c__note">${icon('info', { size: 14 })} ${t('home.hero.visualNote')}</p>` : ''}
+      </div>
+      <div class="arc" data-arc data-reveal="1" role="group" aria-roledescription="carousel" aria-label="${t('home.hero.castLabel')}">
+        <div class="arc__track" data-arc-track>
+          ${people.map((l) => `
+            <a class="arc__card" data-arc-card href="#/marketplace?character=${l.id}" draggable="false">
+              ${characterMedia(l, { size: 'hero', label: false })}
+              <span class="arc__label">${l.media?.video ? `<span class="arc__play" aria-hidden="true">${icon('play', { size: 14 })}</span>` : ''}<span>${pick(l.name)}</span></span>
+            </a>`).join('')}
+        </div>
+      </div>
+      <div class="container arc-controls">
+        <button type="button" class="arc__toggle" data-arc-toggle aria-pressed="false" aria-label="${t('media.pauseCarousel')}">${icon('pause', { className: 'arc__toggle-pause' })}${icon('play', { className: 'arc__toggle-play' })}</button>
       </div>
     </section>`;
 }
@@ -154,7 +157,7 @@ function showcase() {
               </a>
             </li>`).join('')}
         </ul>
-        <div class="center-cta">${btn(t('home.showcase.all'), '#/marketplace', 'secondary')}</div>
+        <div class="center-cta">${btn(t('home.showcase.all'), '#/marketplace', 'secondary')}${people.some((l) => l.media?.video) ? motionToggle() : ''}</div>
 
         <div class="closing" data-reveal>
           <h2 class="closing__title">${t('home.closing.title')}</h2>
@@ -174,6 +177,7 @@ export default {
     const d = disposer();
     d.add(revealOnScroll(root));
     d.add(mountScrollStory(root));
+    d.add(mountArcCarousel(root));
     hydrateCharacterMedia(root);
     return () => d.run();
   },

@@ -58,3 +58,22 @@ active nav link with inset underline — actual contrast 5.6:1 (light) / 7.7:1 (
 - [ ] Mobile reflow on a real phone, both orientations.
 - [ ] Form errors announced and understandable in both languages.
 - [ ] Focus order matches visual order in RTL.
+
+## Monochrome color system — contrast (Nov 2026)
+
+Measured with the WCAG 2.x formula against the surfaces each color is used on.
+
+| Use | Light | Ratio | Dark | Ratio |
+| --- | --- | --- | --- | --- |
+| Headings on canvas | `#141413` on `#F8F8F7` | 17.4 | `#F5F5F2` on `#111110` | 17.3 |
+| Body text | `#484844` on `#F8F8F7` | 8.6 | `#D9D9D4` on `#111110` | 13+ |
+| Secondary text | `#6B6B66` on `#F0F0EE` | 4.7 | `#B0B0AA` on `#1B1B19` | 7.9 |
+| Control boundaries | `#8E8E88` on `#FFFFFF` | 3.3 | `#75756F` on `#1B1B19` | 3.7 |
+| Primary button text | `#FFFFFF` on `#141413` | 18.4 | `#141413` on `#F5F5F2` | 16.9 |
+| Success / error text | `#16805D` · `#C43D3D` on white | 4.9 · 5.1 | `#4CC59A` · `#F08A8A` | 8.0 · 7.2 |
+| Warning | icon `#B7791F` (3.6, non-text); text `#8A5A12` on `#FBF4E6` | 5.4 | `#E5A64A` | 8.1 |
+
+Deviations from the requested palette, for AA: secondary text uses `#6B6B66` (requested `#73736E`
+measures 4.48:1 on the canvas and 4.18:1 on subtle surfaces); `#B7791F` is used only for warning
+icons (3.64:1 is below the 4.5:1 text minimum); `#C5C5C0` is used only for decorative dividers.
+Selection never relies on color: selected options also show a check mark.
