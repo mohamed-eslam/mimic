@@ -124,14 +124,15 @@ export default {
       ready: {
         title: 'Ready-made characters',
         text: 'Browse finished characters, check what each one supports, and request assets or a license.',
-        label: 'Illustration: a character catalog with filters and three character cards',
+        label: 'Three sculptural heads — graphite, ivory and black — on light stone plinths',
         search: 'Search characters',
         filters: ['All', 'Corporate', 'Friendly'],
       },
       custom: {
         title: 'Custom character design',
         text: 'Answer a short guided brief — our team designs a character for your brand or for you.',
-        label: 'Illustration: a guided brief asking which style fits the brand',
+        label: 'An ivory sculpted head with facial pieces and metal rings orbiting around it',
+        abstractLabel: 'Illustration: an abstract face assembled from shapes, with adjustment sliders',
         step: 'Step 2 of 5',
         question: 'Which style fits your brand?',
         options: ['Professional', 'Friendly', 'Casual'],
@@ -140,11 +141,21 @@ export default {
       integration: {
         title: 'Character integration',
         text: 'Our team places your character in your website, app, assistant or content — scoped per project.',
-        label: 'Illustration: an integration request listing website, app, chatbot and content',
+        label: 'A dark sculpted head linked to floating browser, phone, chat and video icons',
         heading: 'Integration request',
         targets: ['Website', 'Mobile app', 'Chatbot or AI assistant', 'Content & campaigns'],
         scoped: 'Scoped and quoted by our team',
       },
+    },
+    statusCards: {
+      title: 'Available Now. Coming Next.',
+      intro: 'What you can order today — and what we’re building next.',
+      nowTitle: 'Start with your digital character',
+      nowText: 'Browse ready-made characters, or request a custom design and its integration into your digital experience.',
+      nowArt: 'Three sculptural heads — graphite, ivory and black — on slim stands',
+      soonTitle: 'Design your character yourself',
+      soonText: 'We’re building an experience that will let you create your digital character with AI.',
+      soonArt: 'One sculpted head split into layers of green stone, bronze, rough stone and white marble',
     },
     status: {
       now: ['Browse and request ready-made characters', 'Request a custom character design', 'Request integration into your digital product'],
@@ -197,7 +208,7 @@ export default {
     },
     closing: {
       title: 'Need a Character of Your Own?',
-      text: 'Start a short guided brief to describe the character your brand needs.',
+      text: 'Start with a short brief describing the character your brand needs.',
     },
     integration: {
       title: 'Need Help Bringing Your Character Into Your Product?',

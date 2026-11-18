@@ -17,7 +17,7 @@ import { BUSINESS } from '../../config/business.js';
 import { findListing } from '../../data/catalog.js';
 import { btn, sectionHead, availabilityBadge } from './shared.js';
 import {
-  visualCard, sceneFrame, catalogScene, briefScene, integrationScene, STORY_CHAPTERS,
+  visualCard, sceneFrame, cardImage, STORY_CHAPTERS,
 } from './product-scenes.js';
 
 /* Hero arc: every catalog character; index 5 starts in the centre (Reem). */
@@ -25,6 +25,7 @@ const HERO_CAST = ['lina', 'faisal', 'nova', 'salma', 'milo', 'reem', 'karim', '
 /* Showcase: four other characters (no repeats with the hero); Milo has a clip too. */
 const SHOWCASE_CAST = ['milo', 'adam', 'lina', 'karim'];
 
+const art = (file) => `assets/characters/${encodeURIComponent(file)}`;  // supplied images (original filenames)
 const arrow = () => icon('arrowRight', { className: 'flip-rtl' });
 const cast = (ids) => ids.map(findListing).filter(Boolean);
 
@@ -64,9 +65,10 @@ function hero() {
 function offer() {
   const o = (k) => t(`home.offerCards.${k}`);
   const cards = [
-    { id: 'ready', visual: catalogScene(), href: '#/marketplace', cta: t('cta.exploreCharacters') },
-    { id: 'custom', visual: briefScene(), href: '#/brief', cta: t('cta.createCustom') },
-    { id: 'integration', visual: integrationScene(), href: '#/request-integration', cta: t('cta.requestIntegration') },
+    // Supplied artwork (assets/characters/; note the third file is named card-3.png)
+    { id: 'ready', visual: cardImage(art('card1.png'), 1376, 768), photo: true, href: '#/marketplace', cta: t('cta.exploreCharacters') },
+    { id: 'custom', visual: cardImage(art('card2.png'), 1376, 768), photo: true, href: '#/brief', cta: t('cta.createCustom') },
+    { id: 'integration', visual: cardImage(art('card-3.png'), 1376, 768), photo: true, href: '#/request-integration', cta: t('cta.requestIntegration') },
   ].map((c) => ({
     ...c,
     title: o(`${c.id}.title`),
@@ -83,26 +85,60 @@ function offer() {
     </section>`;
 }
 
-/* ---------- 03 · Available now / coming soon ---------- */
+/* ---------- 03 · Available now / coming next ---------- */
+/**
+ * Artwork for the two cards (supplied PNGs, original filenames kept; ~16:9, white background):
+ *   Available Now → assets/characters/available.png     (three sculptural heads on stands)
+ *   Coming Soon   → assets/characters/comming soon.png  (one head split into material layers)
+ * White backgrounds melt into the card in light theme (multiply); framed panel in dark (css/home.css).
+ * If a file is missing its container stays a clean reserved surface (no broken image).
+ */
+const STATUS_ART = {
+  now: { src: art('available.png'), w: 2560, h: 1440 },
+  soon: { src: art('comming soon.png'), w: 1376, h: 768 },
+};
+
+function statusCard({ id, badge, title, text, cta, artLabel, image }) {
+  return `
+    <article class="ed-card ed-card--${id}" data-reveal="${id === 'soon' ? 1 : 0}">
+      <div class="ed-card__body">
+        ${badge}
+        <h3 class="ed-card__title">${title}</h3>
+        <p class="ed-card__text">${text}</p>
+        ${cta ?? ''}
+      </div>
+      <div class="ed-card__art" data-art-slot>
+        <img class="ed-card__render" src="${image.src}" alt="${artLabel}" width="${image.w}" height="${image.h}" loading="lazy" decoding="async">
+      </div>
+    </article>`;
+}
+
 function status() {
+  const c = (k) => t(`home.statusCards.${k}`);
   const soonLive = BUSINESS.offerings.aiGeneration === 'available'; // never claim it before it is
   return `
-    <section class="site-section site-section--tight home-status" aria-labelledby="status-title">
+    <section class="site-section home-status" aria-labelledby="status-title">
       <div class="container">
-        <div class="status-split" data-reveal>
-          <div class="status-split__now">
-            ${availabilityBadge('available')}
-            <h2 id="status-title" class="status-split__title">${t('home.availability.title')}</h2>
-            <ul class="status-split__list" role="list">
-              ${tl('home.status.now').map((x) => `<li>${icon('check')}<span>${x}</span></li>`).join('')}
-            </ul>
-          </div>
-          <div class="status-split__soon">
-            ${availabilityBadge(soonLive ? 'available' : 'coming-soon')}
-            <h3 class="status-split__soon-title">${icon('sparkle')}<span>${t('home.status.soon')}</span></h3>
-            <p>${t('home.status.soonText')}</p>
-            <a class="link-arrow" href="#/ai-generation">${tl('home.ways.items')[2].cta} ${arrow()}</a>
-          </div>
+        <header class="section-head" data-reveal>
+          <h2 class="section-head__title" id="status-title">${c('title')}</h2>
+          <p class="section-head__intro">${c('intro')}</p>
+        </header>
+        <div class="ed-grid">
+          ${statusCard({
+            id: 'now',
+            badge: availabilityBadge('available'),
+            title: c('nowTitle'), text: c('nowText'),
+            cta: `<a class="link-arrow ed-card__cta" href="#/marketplace">${t('cta.exploreCharacters')} ${arrow()}</a>`,
+            artLabel: c('nowArt'), image: STATUS_ART.now,
+          })}
+          ${statusCard({
+            id: 'soon',
+            badge: availabilityBadge(soonLive ? 'available' : 'coming-soon'),
+            title: c('soonTitle'), text: c('soonText'),
+            // A real information page exists (/ai-generation) — a quiet link, not a "start" action.
+            cta: `<a class="link-arrow ed-card__cta" href="#/ai-generation">${tl('home.ways.items')[2].cta} ${arrow()}</a>`,
+            artLabel: c('soonArt'), image: STATUS_ART.soon,
+          })}
         </div>
       </div>
     </section>`;
@@ -160,9 +196,15 @@ function showcase() {
         <div class="center-cta">${btn(t('home.showcase.all'), '#/marketplace', 'secondary')}${people.some((l) => l.media?.video) ? motionToggle() : ''}</div>
 
         <div class="closing" data-reveal>
-          <h2 class="closing__title">${t('home.closing.title')}</h2>
-          <p class="closing__text">${t('home.closing.text')}</p>
-          ${btn(t('cta.createCustom'), '#/brief', 'primary')}
+          <div class="closing__body">
+            <h2 class="closing__title">${t('home.closing.title')}</h2>
+            <p class="closing__text">${t('home.closing.text')}</p>
+            ${btn(t('cta.requestCustom'), '#/brief', 'primary')}
+          </div>
+          <!-- Decorative artwork: assets/characters/create.png (2560×1440, white studio backdrop) -->
+          <div class="closing__art">
+            <img class="closing__img" src="${art('create.png')}" alt="" width="2560" height="1440" loading="lazy" decoding="async">
+          </div>
         </div>
       </div>
     </section>`;
@@ -178,6 +220,10 @@ export default {
     d.add(revealOnScroll(root));
     d.add(mountScrollStory(root));
     d.add(mountArcCarousel(root));
+    root.querySelectorAll('[data-art-slot] img').forEach((img) => {
+      const miss = () => img.closest('[data-art-slot]').classList.add('is-missing');
+      if (img.complete && !img.naturalWidth) miss(); else img.addEventListener('error', miss, { once: true });
+    });
     hydrateCharacterMedia(root);
     return () => d.run();
   },

@@ -82,3 +82,16 @@ Unmatched (kept, not used): `…he-should-look-mostly-human_UPmtud7wny.png`,
 `…original-premium-abstract-3d-brand-mascot_gOI8u6FSXO.png`, `…premium-stylized-3d-egyptian-female_lJ8oCSfgv9.png`.
 
 `license.txt` files are still missing for every character.
+
+## Homepage section artwork (not characters)
+
+| Section / card | File |
+| --- | --- |
+| What we offer · Ready-made characters | `card1.png` |
+| What we offer · Custom character design | `card2.png` |
+| What we offer · Character integration | `card-3.png` (hyphenated) |
+| Available Now | `available.png` |
+| Coming Soon | `comming soon.png` (original spelling, with a space) |
+| Closing CTA "Need a Character of Your Own?" | `create.png` |
+
+Kept locally but not used or committed: `last section.webm` (replaced by `create.png`).

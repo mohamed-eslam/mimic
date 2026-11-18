@@ -8,7 +8,7 @@ import { t } from '../../i18n/index.js';
 import { icon } from '../../ui/icons.js';
 import { revealOnScroll } from '../../ui/reveal.js';
 import { pageHero } from './shared.js';
-import { visualCard, catalogScene, briefScene, integrationScene } from './product-scenes.js';
+import { visualCard, readyArt, designArt, integrateArt } from './product-scenes.js';
 
 const arrow = () => icon('arrowRight', { className: 'flip-rtl' });
 
@@ -24,14 +24,14 @@ export default {
   render() {
     const o = (k) => t(`home.offerCards.${k}`);
     const cards = [
-      { id: 'ready', visual: catalogScene(), href: '#/marketplace', cta: t('cta.exploreCharacters') },
-      { id: 'custom', visual: briefScene(), href: '#/custom', cta: t('nav.custom') },
-      { id: 'integration', visual: integrationScene(), href: '#/integration', cta: t('nav.integration') },
+      { id: 'ready', visual: readyArt(), art: true, href: '#/marketplace', cta: t('cta.exploreCharacters') },
+      { id: 'custom', visual: designArt(), art: true, href: '#/custom', cta: t('nav.custom') },
+      { id: 'integration', visual: integrateArt(), art: true, href: '#/integration', cta: t('nav.integration') },
     ].map((c) => ({
       ...c,
       title: o(`${c.id}.title`),
       text: o(`${c.id}.text`),
-      label: o(`${c.id}.label`),
+      label: o(c.id === 'custom' ? 'custom.abstractLabel' : `${c.id}.label`), // this page keeps the abstract face
       cta: `<a class="link-arrow vcard__cta" href="${c.href}">${c.cta} ${arrow()}</a>`,
     }));
     return `

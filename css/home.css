@@ -56,41 +56,8 @@
 }
 
 /* Shared mock pieces */
-.sc-window { inline-size: min(100%, 19rem); padding: 14px; border: 1px solid var(--sc-line); border-radius: var(--radius-lg); background: var(--sc-surface); box-shadow: var(--sc-mock-shadow); }
 .sc-btn { display: block; inline-size: 100%; padding: 7px 10px; border-radius: var(--radius-pill); background: var(--sc-green); color: #fff; font-weight: var(--weight-semibold); text-align: center; }
 .sc-pill { padding: 1px 8px; border-radius: var(--radius-pill); background: var(--sc-green-soft); color: var(--sc-green); font-weight: var(--weight-semibold); white-space: nowrap; }
-
-/* ---------- Catalog ---------- */
-.sc-search { display: flex; align-items: center; gap: 8px; padding: 7px 10px; border: 1px solid var(--sc-line); border-radius: var(--radius-pill); color: var(--sc-muted); }
-.sc-chips { display: flex; gap: 6px; margin-block: 10px; }
-.sc-chips span { padding: 2px 10px; border: 1px solid var(--sc-line-strong); border-radius: var(--radius-pill); color: var(--sc-muted); }
-.sc-chips span.is-on { border-color: var(--sc-green); background: var(--sc-green-soft); color: var(--sc-green); font-weight: var(--weight-semibold); }
-.sc-thumbs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
-.sc-thumb { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
-.sc-thumb strong { font-weight: var(--weight-semibold); overflow-wrap: anywhere; }
-.sc-thumb__img { display: block; aspect-ratio: 3 / 4; overflow: hidden; border-radius: 10px; background: var(--sc-backdrop); }
-.sc-thumb__img img { inline-size: 100%; block-size: 100%; object-fit: cover; object-position: 50% 0; }
-
-/* ---------- Brief ---------- */
-.sc-brief { display: flex; flex-direction: column; gap: 10px; }
-.sc-brief__top { display: flex; align-items: center; gap: 10px; color: var(--sc-muted); }
-.sc-progress { position: relative; flex: 1; block-size: 4px; border-radius: 2px; background: var(--sc-line); }
-.sc-progress i { position: absolute; inset-block: 0; inset-inline-start: 0; border-radius: inherit; background: var(--sc-green); }
-.sc-brief__q { font-size: 0.9375rem; }
-.sc-options { display: flex; flex-direction: column; gap: 6px; }
-.sc-option { display: flex; align-items: center; gap: 8px; padding: 7px 10px; border: 1px solid var(--sc-line-strong); border-radius: 10px; }
-.sc-option i { inline-size: 14px; block-size: 14px; border: 1.5px solid var(--sc-line-strong); border-radius: 50%; }
-.sc-option.is-on { border-color: var(--sc-green); border-width: 1.5px; background: var(--sc-green-soft); color: var(--sc-green); font-weight: var(--weight-semibold); }
-
-/* ---------- Integration request ---------- */
-.sc-int__head { display: flex; align-items: center; gap: 8px; padding-block-end: 10px; border-block-end: 1px solid var(--sc-line); color: var(--sc-green); }
-.sc-int__head strong { color: var(--sc-ink); font-size: 0.875rem; }
-.sc-int__list { display: flex; flex-direction: column; gap: 6px; margin-block: 10px; }
-.sc-int__list li { display: flex; align-items: center; gap: 8px; padding: 6px 8px; border: 1px solid var(--sc-line); border-radius: 10px; }
-.sc-int__ic { display: grid; place-items: center; flex-shrink: 0; inline-size: 24px; block-size: 24px; border-radius: 7px; background: var(--sc-green-soft); color: var(--sc-green); }
-.sc-int__ok { display: grid; place-items: center; margin-inline-start: auto; inline-size: 18px; block-size: 18px; border-radius: 50%; background: var(--sc-green); color: #fff; }
-.sc-int__foot { display: flex; align-items: flex-start; gap: 6px; color: var(--sc-muted); }
-.sc-int__foot .icon { flex-shrink: 0; margin-block-start: 2px; color: var(--sc-green); }
 
 /* ---------- Chat widget ---------- */
 .sc-chat { inline-size: min(100%, 19rem); overflow: hidden; border: 1px solid var(--sc-line); border-radius: var(--radius-lg); background: var(--sc-surface); box-shadow: var(--sc-mock-shadow); }
@@ -166,27 +133,68 @@
 .vcard__cta { margin-block-start: auto; padding-block-start: var(--space-2); }
 
 /* ==========================================================================
-   03 · Available now / coming soon
+   03 · Available now / coming next — editorial cards
+   Status → title → text → CTA, then soft-clay artwork anchored to the bottom
+   (lower ~half of the card). Text never overlaps the art.
    ========================================================================== */
-.status-split {
-  display: grid;
-  grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
+.ed-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--grid-gap); }
+.ed-card {
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-2xl);
-  background: var(--color-surface);
-  box-shadow: var(--card-shadow);
+  border-radius: var(--radius-panel);
+  background: var(--color-surface-subtle);
 }
-.status-split__now, .status-split__soon { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-4); padding: clamp(1.5rem, 1rem + 2vw, 2.5rem); }
-.status-split__soon { border-inline-start: 1px dashed var(--color-border-strong); background: var(--color-surface-muted); }
-.status-split__title { font-size: var(--fs-h2); line-height: var(--lh-h2); font-weight: var(--weight-bold); color: var(--color-heading); letter-spacing: var(--tracking-tight); }
-.status-split__list { display: flex; flex-direction: column; gap: var(--space-3); }
-.status-split__list li { display: flex; align-items: flex-start; gap: var(--space-3); font-size: var(--fs-body); color: var(--color-text); }
-.status-split__list .icon { flex-shrink: 0; margin-block-start: 0.2em; --icon-size: 18px; color: var(--color-primary); }
-.status-split__soon-title { display: flex; align-items: flex-start; gap: var(--space-2); font-size: var(--fs-h3); line-height: var(--lh-h3); font-weight: var(--weight-bold); color: var(--color-heading); }
-.status-split__soon-title .icon { flex-shrink: 0; margin-block-start: 0.15em; color: var(--color-creative); }
-.status-split__soon p { font-size: var(--fs-body-sm); color: var(--color-text-muted); }
-.status-split__soon .link-arrow { margin-block-start: auto; }
+.ed-card--soon { background: var(--color-surface-sunken); }
+.ed-card__body { flex: 0 0 auto; display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-2); padding: clamp(1.5rem, 1.2rem + 1vw, 2rem) clamp(1.5rem, 1.2rem + 1vw, 2rem) var(--space-2); }
+.ed-card__body .badge { margin-block-end: var(--space-1); }
+.ed-card__title { font-size: var(--fs-title); line-height: var(--lh-title); font-weight: var(--fw-heading); color: var(--color-heading); letter-spacing: var(--tracking-tight); }
+.ed-card__text { max-inline-size: 30rem; font-size: var(--fs-body-sm); line-height: var(--lh-body); color: var(--color-text-muted); }
+.ed-card__cta { margin-block-start: var(--space-2); }
+.ed-card__art {
+  /* Sized by the artwork itself: full card width at the image's own aspect ratio, anchored
+     to the bottom edge → no empty band, no stretching, no cropping. */
+  position: relative;
+  flex: 0 0 auto;
+  margin-block-start: auto;        /* if the row makes this card taller, the gap sits above the art */
+  display: flex;
+  justify-content: center;
+  padding: var(--space-4) var(--space-4) 0;
+  overflow: hidden;
+}
+.ed-card__render {
+  display: block;
+  inline-size: 100%;
+  max-inline-size: 36rem;
+  block-size: auto;                /* width/height attributes give the true ratio → no layout shift */
+  object-fit: contain;
+  object-position: center bottom;
+  transform: translateY(6px);      /* rests 6px into the card edge (white margin) so the lift never shows a gap */
+  transition: transform 500ms var(--ease-out);
+}
+/* Light theme: the PNGs' pure-white backgrounds take on the card colour exactly */
+:root:not([data-theme="dark"]) .ed-card__render {
+  mix-blend-mode: multiply;
+  /* The PNG backgrounds are near-white at their edges (slight vignette/border); fade the top and
+     side edges so no rectangle shows. Subjects sit well inside these margins. */
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 9%, #000 91%, transparent), linear-gradient(to bottom, transparent, #000 12%);
+  -webkit-mask-composite: source-in;
+          mask-image: linear-gradient(to right, transparent, #000 9%, #000 91%, transparent), linear-gradient(to bottom, transparent, #000 12%);
+          mask-composite: intersect;
+}
+/* Dark theme: a white background can't disappear → a clean panel rising from the bottom edge */
+:root[data-theme="dark"] .ed-card__render { border-radius: 18px 18px 0 0; box-shadow: 0 -1px 0 rgb(255 255 255 / 0.06), var(--shadow-md); }
+.ed-card:is(:hover, :focus-within) .ed-card__render { transform: translateY(0); } /* 6px lift */
+/* Artwork not supplied yet: keep the reserved surface clean (no broken-image icon) */
+.ed-card__art.is-missing .ed-card__render { visibility: hidden; }
+
+@media (max-width: 719px) {
+  .ed-grid { grid-template-columns: minmax(0, 1fr); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ed-card__render { transition: none; }
+  .ed-card:is(:hover, :focus-within) .ed-card__render { transform: translateY(6px); }
+}
 
 /* ==========================================================================
    04 · Characters in action — scroll story
@@ -244,18 +252,50 @@
 .closing {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: var(--space-4);
   margin-block-start: clamp(3.5rem, 2.5rem + 4vw, 6rem);
-  padding: clamp(2rem, 1.5rem + 3vw, 3.5rem) var(--space-6);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-2xl);
   background: radial-gradient(70% 90% at 50% 0%, var(--color-accent-soft), transparent 70%), var(--color-surface);
   text-align: center;
+  overflow: hidden; /* the artwork is anchored to the bottom edge and takes the card's corners */
+}
+.closing__body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  padding: clamp(2rem, 1.5rem + 3vw, 3.5rem) var(--space-6) clamp(2rem, 1.5rem + 2vw, 3rem);
 }
 .closing__title { font-size: var(--fs-h2); line-height: var(--lh-h2); font-weight: var(--weight-bold); color: var(--color-heading); letter-spacing: var(--tracking-tight); text-wrap: balance; }
 .closing__text { max-inline-size: 34rem; font-size: var(--fs-lead); color: var(--color-text-muted); text-wrap: pretty; }
 .closing .btn { margin-block-start: var(--space-2); }
+
+/* Closing artwork: sits under the CTA, anchored to the card's bottom edge (the card clips the
+   last few px of the studio floor). Light theme: multiply + a soft elliptical fade turn the image's
+   near-white backdrop into the card surface itself — no box, no edge. Dark theme: a white backdrop can't blend into a dark
+   card, so it reads as a soft rounded panel rising from the bottom edge. */
+.closing__art {
+  display: flex;
+  justify-content: center;
+  padding-inline: var(--space-4);
+}
+.closing__img {
+  display: block;
+  inline-size: 100%;
+  max-inline-size: 52rem;
+  block-size: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: contain;
+  margin-block-end: -4px;
+}
+:root:not([data-theme="dark"]) .closing__img {
+  mix-blend-mode: multiply;
+  /* the backdrop is near-white, not pure white: one soft ellipse dissolves its faint edges so no
+     rectangle shows; the head, fragments and plinth stay fully opaque */
+  -webkit-mask-image: radial-gradient(ellipse 52% 68% at 50% 70%, #000 66%, transparent 100%);
+          mask-image: radial-gradient(ellipse 52% 68% at 50% 70%, #000 66%, transparent 100%);
+}
+:root[data-theme="dark"] .closing__img { border-radius: 18px 18px 0 0; }
 
 /* ==========================================================================
    Motion — staggered entrance via the site reveal system; scene-linked in the story
@@ -276,8 +316,6 @@
 }
 @media (max-width: 899px) {
   .story__chapter { grid-template-columns: minmax(0, 1fr); }
-  .status-split { grid-template-columns: minmax(0, 1fr); }
-  .status-split__soon { border-inline-start: 0; border-block-start: 1px dashed var(--color-border-strong); }
 }
 @media (max-width: 719px) {
   .vcard-grid { grid-template-columns: minmax(0, 1fr); }
@@ -296,7 +334,8 @@
     scrollbar-width: thin;
   }
   .char-tile { scroll-snap-align: start; }
-  .closing { padding-inline: var(--space-5); }
+  .closing__body { padding-inline: var(--space-5); }
+  .closing__art { padding-inline: var(--space-3); }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -333,3 +372,110 @@
 .services-more__ic .icon { --icon-size: 16px; }
 @media (max-width: 899px) { .services-more ul { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 479px) { .services-more ul { grid-template-columns: minmax(0, 1fr); } }
+
+/* ==========================================================================
+   02 · Abstract service illustrations (product-scenes.js → readyArt / designArt / integrateArt)
+   Theme-aware (tokens flip in dark). Shared language: 1.5 strokes, 12 radius tiles,
+   paper / soft / mid / ink. Idle: one slow float per card; hover/focus adds motion.
+   ========================================================================== */
+.sc-visual--art {
+  background:
+    radial-gradient(60% 55% at 50% 45%, var(--color-surface), transparent 75%),
+    radial-gradient(circle, var(--art-dot) 1px, transparent 1.2px) 0 0 / 16px 16px,
+    var(--color-surface-subtle);
+  padding: clamp(1rem, 0.75rem + 1vw, 1.5rem);
+  color: var(--color-text-primary);
+}
+.art {
+  --art-paper: var(--color-surface);
+  --art-soft: var(--n-100);
+  --art-soft-strong: var(--n-150);
+  --art-mid: var(--n-300);
+  --art-ink: var(--n-900);
+  --art-line: var(--n-150);
+  --art-line-strong: var(--n-400);
+  display: block;
+  inline-size: 100%;
+  max-inline-size: 22rem;
+  block-size: auto;
+  aspect-ratio: 320 / 220; /* reserves space → no layout shift */
+  overflow: visible;
+}
+.sc-visual--art { --art-dot: rgb(20 20 19 / 0.07); }
+:root[data-theme="dark"] .sc-visual--art { --art-dot: rgb(245 245 242 / 0.06); }
+
+.art-paper { fill: var(--art-paper); stroke: var(--art-line); stroke-width: 1.5; }
+.art-paper-fill { fill: var(--art-paper); }
+.art-soft { fill: var(--art-soft); }
+.art-soft-strong { fill: var(--art-soft-strong); }
+.art-mid { fill: var(--art-mid); }
+.art-mid-dot { fill: var(--art-mid); }
+.art-ink { fill: var(--art-ink); }
+.art-line-fill { fill: var(--art-paper); stroke: var(--art-line); stroke-width: 1.5; }
+.art-edge { stroke: var(--art-line-strong); stroke-width: 1.5; stroke-linejoin: round; }
+.art-stroke { fill: none; stroke: var(--art-ink); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.art-stroke-ink { fill: none; stroke: var(--art-ink); stroke-width: 2.5; stroke-linecap: round; }
+.art-check { fill: none; stroke: var(--art-paper); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.art-guide { fill: none; stroke: var(--art-line-strong); stroke-width: 1.5; stroke-dasharray: 3 5; stroke-linecap: round; }
+.art-ring { fill: none; stroke: var(--art-ink); stroke-width: 1.5; stroke-dasharray: 2 9; stroke-linecap: round; opacity: 0.35; }
+.art-knob { fill: var(--art-paper); stroke: var(--art-ink); stroke-width: 1.5; }
+.art-link { stroke: var(--art-line-strong); stroke-width: 1.5; stroke-dasharray: 2 5; stroke-linecap: round; }
+.art-node { fill: var(--art-paper); stroke: var(--art-line-strong); stroke-width: 1.5; }
+.art-pulse { stroke: var(--art-ink); stroke-width: 2; stroke-linecap: round; stroke-dasharray: 8 100; stroke-dashoffset: 8; opacity: 0; }
+
+/* Transforms act on each shape's own box */
+.art g, .art rect, .art circle, .art path { transform-box: fill-box; transform-origin: center; }
+
+/* Idle: one slow float per card */
+.art-float { animation: art-float 6s var(--ease-in-out) infinite; }
+@keyframes art-float { 50% { transform: translateY(-4px); } }
+
+/* Hover / focus reactions */
+.art-tile, .art-mod, .art-ring, .art-knob, .art-slider__fill { transition: transform 600ms var(--ease-out); }
+.art-tile--l { transform: rotate(-7deg); }
+.art-tile--r { transform: rotate(7deg); }
+.vcard:is(:hover, :focus-within) .art-tile--l { transform: rotate(-11deg) translateX(-8px); }
+.vcard:is(:hover, :focus-within) .art-tile--r { transform: rotate(11deg) translateX(8px); }
+.vcard:is(:hover, :focus-within) .art-tile--c { transform: translateY(-4px); }
+
+.art-slider__fill { transform-origin: left center; }
+.vcard:is(:hover, :focus-within) .art-knob--a { transform: translateX(-26px); }
+.vcard:is(:hover, :focus-within) .art-slider__fill:not(.art-slider__fill--b) { transform: scaleX(0.63); }
+.vcard:is(:hover, :focus-within) .art-knob--b { transform: translateX(34px); }
+.vcard:is(:hover, :focus-within) .art-slider__fill--b { transform: scaleX(1.9); }
+.vcard:is(:hover, :focus-within) .art-mod--sq { transform: rotate(45deg); }
+.vcard:is(:hover, :focus-within) .art-mod--dot { transform: translate(-6px, -4px); }
+.vcard:is(:hover, :focus-within) .art-ring { transform: rotate(40deg); }
+
+.vcard:is(:hover, :focus-within) .art-pulse { animation: art-pulse 1.6s var(--ease-in-out) var(--d, 0s) infinite; }
+@keyframes art-pulse { 0% { stroke-dashoffset: 8; opacity: 0; } 15% { opacity: 1; } 85% { opacity: 1; } 100% { stroke-dashoffset: -100; opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .art-float, .vcard:is(:hover, :focus-within) .art-pulse { animation: none; }
+  .art-tile, .art-mod, .art-ring, .art-knob, .art-slider__fill { transition: none; }
+}
+
+/* Supplied card artwork (What we offer): the illustration area takes the image's own shape,
+   so object-fit: contain fills it edge to edge — no letterboxing, no cropping, no distortion.
+   All three images share 1376×768, so the three areas match exactly. */
+.sc-visual--photo {
+  min-height: 0;
+  padding: 0;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  /* Matches the supplied renders' studio backdrop (measured ≈ #e6e6de) for the instant before load */
+  background: #e6e6de;
+}
+.sc-photo {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: contain;
+  object-position: center;
+  transition: transform 600ms var(--ease-out);
+}
+.vcard:is(:hover, :focus-within) .sc-photo { transform: scale(1.02); }
+@media (prefers-reduced-motion: reduce) {
+  .sc-photo { transition: none; }
+  .vcard:is(:hover, :focus-within) .sc-photo { transform: none; }
+}
