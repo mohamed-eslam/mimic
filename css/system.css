@@ -1,0 +1,112 @@
+/* ==========================================================================
+   System layer — the shared visual language every page draws from.
+   Loaded after page styles (site, hero, home) and before a11y.css, so page rules
+   keep their LAYOUT while radius / borders / surfaces / control sizing come from
+   the tokens in tokens.css. Logical properties only → RTL-ready.
+   ========================================================================== */
+
+/* ---------- Page header (shared by every inner page via pageHero()) ---------- */
+.page-hero { padding-block: clamp(2rem, 1.25rem + 2.5vw, 3.5rem) clamp(1.5rem, 1rem + 2vw, 2.5rem); }
+.page-hero__copy { gap: var(--space-3); max-width: 46rem; }
+.page-hero__copy .page-hero__title { max-width: 24ch; text-wrap: balance; }
+:lang(ar) .page-hero__copy .page-hero__title { max-width: 28ch; }
+.page-hero__lead { max-width: var(--measure-lead); color: var(--color-text-muted); text-wrap: pretty; }
+.page-hero__copy > .hero-b__actions { margin-block-start: var(--space-3); }
+
+/* ---------- Eyebrow pill (homepage hero + every page header) ---------- */
+.eyebrow--pill {
+  display: inline-block;
+  max-width: 100%;
+  margin-block-end: var(--space-1);
+  padding-block: 4px;
+  padding-inline: 10px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-xs);
+  color: var(--color-text-muted);
+  font-size: var(--fs-label);
+  font-weight: var(--fw-semibold);
+  letter-spacing: 0;
+  line-height: 1.5;
+  text-transform: none;
+  text-wrap: balance;
+}
+.eyebrow--pill::before {
+  content: "";
+  display: inline-block;
+  inline-size: 7px;
+  block-size: 7px;
+  margin-inline-end: 8px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-accent-soft);
+  vertical-align: 0.1em;
+}
+@media (max-width: 719px) { .eyebrow--pill { border-radius: var(--radius-control); } }
+
+/* ---------- Cards: one radius, one border, one surface ---------- */
+:where(.way-card, .audience-card, .offer-item, .package-card, .int-option, .int-area, .contact-option,
+  .finder__card, .uses-col, .avail__col, .service-line, .likeness, .brief-preview, .soon__planned,
+  .scaffold__plan, .wz-review__doc, .wz-result, .wz-timeline, .vcard, .mcard, .market__custom, .int-cta) {
+  border-radius: var(--radius-card);
+}
+:where(.wizard__main, .wizard__summary, .wz-success, .status-split, .closing, .soon__alt, .int-path,
+  .hero-stage, .empty-state) {
+  border-radius: var(--radius-panel);
+}
+:where(.way-card, .audience-card, .package-card, .int-option:not(.int-option--primary), .contact-option,
+  .finder__card, .int-area, .vcard, .mcard) {
+  border: 1px solid var(--color-border);
+}
+/* Interactive cards share one hover */
+:where(.way-card, .audience-card, .vcard, .mcard) {
+  transition: translate var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out), border-color var(--dur-base) var(--ease-out);
+}
+:where(.way-card, .audience-card, .vcard, .mcard):hover { transform: none; translate: 0 -3px; box-shadow: var(--card-shadow-hover); border-color: var(--color-border-strong); }
+
+/* ---------- Controls ---------- */
+.chip {
+  height: auto;
+  min-height: 34px;
+  padding: 4px 14px;
+  border-width: 1px;
+  font-size: var(--fs-label);
+  font-weight: var(--fw-medium);
+  line-height: 1.4;
+}
+.chip:hover { transform: none; border-color: var(--color-text-muted); }
+.chip:active { transform: none; }
+.chip[aria-pressed="true"], .chip[aria-checked="true"] {
+  background: var(--color-accent-soft);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  font-weight: var(--fw-semibold);
+}
+.chip:disabled, .chip[aria-disabled="true"] { opacity: 0.5; cursor: not-allowed; border-style: dashed; }
+
+.input, .select, .textarea {
+  border-width: 1px;
+  border-radius: var(--radius-control);
+  font-size: var(--fs-input);
+}
+.input, .select { min-height: var(--btn-h-md); }
+
+.badge {
+  height: auto;
+  min-height: 22px;
+  padding: 2px 10px;
+  font-size: var(--fs-caption);
+  font-weight: var(--fw-semibold);
+  line-height: 1.4;
+}
+
+.dialog, .talent-dialog { border-radius: var(--radius-panel); }
+
+/* ---------- Section spacing: one rhythm everywhere ---------- */
+.section-head { margin-block-end: clamp(1.5rem, 1rem + 1.5vw, 2.25rem); gap: var(--space-3); }
+.section-head__intro { font-size: var(--fs-lead); color: var(--color-text-muted); max-width: var(--measure-lead); }
+
+@media (prefers-reduced-motion: reduce) {
+  :where(.way-card, .audience-card, .vcard, .mcard):hover { translate: none; }
+}

@@ -34,7 +34,9 @@ export async function resolveAssets(listing, { full = false } = {}) {
   const key = `${listing.id}:${full}`;
   if (resolved.has(key)) return resolved.get(key);
   const exp = expectedAssets(listing);
-  const result = { main: await firstExisting(listing.folder, exp.main), poses: {}, expressions: {} };
+  // Explicit artwork (catalog `media.image`) wins; otherwise probe the folder convention.
+  const explicit = listing.media?.image && (await exists(listing.media.image)) ? listing.media.image : null;
+  const result = { main: explicit ?? await firstExisting(listing.folder, exp.main), poses: {}, expressions: {} };
   if (full) {
     await Promise.all([
       ...Object.entries(exp.poses).map(async ([p, names]) => { result.poses[p] = await firstExisting(listing.folder, names); }),
@@ -57,7 +59,7 @@ export async function assetReport() {
   for (const c of CATALOG) {
     const a = await resolveAssets(c, { full: true });
     const missing = [];
-    if (!a.main) missing.push('main.webp');
+    if (!a.main) missing.push('main.webp (or media.image)');
     Object.entries(a.poses).forEach(([p, url]) => { if (!url) missing.push(`pose-${p}.webp`); });
     Object.entries(a.expressions).forEach(([e, url]) => { if (!url) missing.push(`expression-${e}.webp`); });
     rows.push({ id: c.id, folder: c.folder, missing: missing.join(', ') || '—' });

@@ -1,0 +1,481 @@
+/* ==========================================================================
+   Homepage sections 02–05 (js/pages/site/home.js, product-scenes.js)
+
+   Product visuals (.sc-visual) stay light and neutral in BOTH themes — they read
+   as product shots — so they use a fixed local palette. Card bodies, panels and
+   the closing CTA follow the theme tokens.
+   Contrast inside visuals (light, both themes): ink #141413 17:1 · muted #5f5f5a 6.3:1.
+   Logical properties only → RTL-ready. All motion off under prefers-reduced-motion.
+   ========================================================================== */
+
+:root {
+  --sc-stage: #f3f3f1;
+  --sc-surface: #ffffff;
+  --sc-line: #e3e3e0;
+  --sc-line-strong: #c5c5c0;
+  --sc-ink: #141413;
+  --sc-muted: #5f5f5a;
+  --sc-green: #141413; /* action ink inside product visuals (monochrome) */
+  --sc-green-soft: #ececea;
+  --sc-backdrop: var(--media-backdrop);
+  --sc-mock-shadow: 0 1px 2px rgb(20 20 19 / 0.06), 0 10px 24px -10px rgb(20 20 19 / 0.22);
+}
+
+/* ==========================================================================
+   Visual frame (shared by cards and the story)
+   ========================================================================== */
+.sc-visual {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 19rem;
+  padding: clamp(2.5rem, 2rem + 1vw, 3rem) clamp(1rem, 0.75rem + 1vw, 1.5rem) clamp(1.25rem, 1rem + 1vw, 1.75rem);
+  border-radius: var(--radius-lg);
+  background:
+    radial-gradient(70% 60% at 50% 40%, rgb(20 20 19 / 0.04), transparent 70%),
+    linear-gradient(rgb(20 20 19 / 0.035) 1px, transparent 1px) 0 0 / 24px 24px,
+    linear-gradient(90deg, rgb(20 20 19 / 0.035) 1px, transparent 1px) 0 0 / 24px 24px,
+    var(--sc-stage);
+  color: var(--sc-ink);
+}
+.sc-scene { position: relative; display: grid; place-items: center; inline-size: 100%; font-size: var(--fs-caption); line-height: 1.45; }
+:lang(ar) .sc-scene { line-height: 1.7; }
+.sc-demo {
+  position: absolute;
+  inset-block-start: var(--space-3);
+  inset-inline-start: var(--space-3);
+  z-index: 2;
+  padding: 2px 10px;
+  border: 1px solid var(--sc-line);
+  border-radius: var(--radius-pill);
+  background: rgb(255 255 255 / 0.92);
+  color: var(--sc-muted);
+  font-size: var(--fs-caption);
+  font-weight: var(--weight-semibold);
+  line-height: 1.6;
+}
+
+/* Shared mock pieces */
+.sc-btn { display: block; inline-size: 100%; padding: 7px 10px; border-radius: var(--radius-pill); background: var(--sc-green); color: #fff; font-weight: var(--weight-semibold); text-align: center; }
+.sc-pill { padding: 1px 8px; border-radius: var(--radius-pill); background: var(--sc-green-soft); color: var(--sc-green); font-weight: var(--weight-semibold); white-space: nowrap; }
+
+/* ---------- Chat widget ---------- */
+.sc-chat { inline-size: min(100%, 19rem); overflow: hidden; border: 1px solid var(--sc-line); border-radius: var(--radius-lg); background: var(--sc-surface); box-shadow: var(--sc-mock-shadow); }
+.sc-chat__head { display: flex; align-items: center; gap: var(--space-2); padding: 10px 12px; border-block-end: 1px solid var(--sc-line); }
+.sc-chat__who { display: flex; flex-direction: column; flex: 1; min-width: 0; }
+.sc-chat__who strong { font-size: 0.875rem; }
+.sc-chat__who small { font-size: var(--fs-caption); color: var(--sc-muted); }
+.sc-chat__log { display: flex; flex-direction: column; gap: var(--space-2); padding: 12px; }
+.sc-msg { max-inline-size: 86%; padding: 7px 11px; border-radius: 14px; }
+.sc-msg--bot { align-self: flex-start; background: #f0f0ee; border-end-start-radius: 4px; }
+.sc-msg--user { align-self: flex-end; background: var(--sc-green); color: #fff; border-end-end-radius: 4px; }
+.sc-typing { align-self: flex-start; display: inline-flex; gap: 4px; padding: 10px 12px; border-radius: 14px; border-end-start-radius: 4px; background: #f0f0ee; }
+.sc-typing span { inline-size: 6px; block-size: 6px; border-radius: 50%; background: #8e8e88; animation: sc-typing 1.2s var(--ease-in-out) infinite; }
+.sc-typing span:nth-child(2) { animation-delay: 0.15s; }
+.sc-typing span:nth-child(3) { animation-delay: 0.3s; }
+@keyframes sc-typing { 0%, 60%, 100% { opacity: 0.35; translate: 0 0; } 30% { opacity: 1; translate: 0 -3px; } }
+.sc-chat__input { display: flex; align-items: center; gap: 6px; padding: 9px 12px; border-block-start: 1px solid var(--sc-line); background: #f8f8f7; color: var(--sc-muted); }
+.sc-chat__input .icon { flex-shrink: 0; color: var(--sc-green); }
+/* Face-centred avatar crop from a wide studio portrait */
+.sc-avatar { position: relative; flex-shrink: 0; inline-size: 34px; block-size: 34px; overflow: hidden; border-radius: 50%; background: var(--sc-backdrop); box-shadow: 0 0 0 2px #fff, 0 0 0 3px var(--sc-green-soft); }
+.sc-avatar__img { position: absolute; inset-block-start: -2%; left: 50%; inline-size: 330%; max-inline-size: none; block-size: auto; transform: translateX(-50%); }
+
+/* ---------- Phone ---------- */
+.sc-phone { position: relative; inline-size: 11.5rem; padding: 6px; border-radius: 30px; background: #111827; box-shadow: var(--sc-mock-shadow); }
+.sc-phone__notch { position: absolute; inset-block-start: 12px; left: 50%; z-index: 1; inline-size: 52px; block-size: 14px; border-radius: 8px; background: #111827; transform: translateX(-50%); }
+.sc-phone__screen { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 30px 12px 14px; border-radius: 24px; background: var(--sc-surface); text-align: center; }
+.sc-phone__step { color: var(--sc-muted); }
+.sc-phone__hero { inline-size: 100%; block-size: 6.75rem; overflow: hidden; border-radius: 14px; background: var(--sc-backdrop); }
+.sc-phone__img { inline-size: 100%; block-size: 100%; object-fit: cover; object-position: 50% 0; }
+.sc-dots { display: inline-flex; gap: 4px; }
+.sc-dots i { inline-size: 6px; block-size: 6px; border-radius: 50%; background: var(--sc-line-strong); }
+.sc-dots i.is-on { inline-size: 16px; border-radius: 3px; background: var(--sc-green); }
+.sc-phone__title { font-size: 0.9375rem; }
+.sc-phone__body { color: var(--sc-muted); }
+.sc-tip { position: absolute; inset-block-start: 38%; inset-inline-end: -2%; display: flex; align-items: flex-start; gap: 6px; max-inline-size: 9.5rem; padding: 8px 10px; border: 1px solid var(--sc-line); border-radius: 12px; background: var(--sc-surface); box-shadow: var(--sc-mock-shadow); }
+.sc-tip .icon { flex-shrink: 0; margin-block-start: 2px; color: var(--sc-green); }
+
+/* ---------- Presenter ---------- */
+.sc-player { inline-size: min(100%, 26rem); overflow: hidden; border: 1px solid var(--sc-line); border-radius: var(--radius-lg); background: var(--sc-surface); box-shadow: var(--sc-mock-shadow); }
+.sc-player__frame { position: relative; aspect-ratio: 16 / 10; background: var(--sc-backdrop); }
+.sc-player__img { position: absolute; inset: 0; inline-size: 100%; block-size: 100%; object-fit: cover; object-position: 50% 0; }
+.sc-player__live { position: absolute; inset-block-start: 10px; inset-inline-end: 10px; display: inline-flex; align-items: center; gap: 6px; padding: 2px 10px; border-radius: var(--radius-pill); background: rgb(20 20 19 / 0.78); color: #fff; font-weight: var(--weight-semibold); }
+.sc-player__live i { inline-size: 7px; block-size: 7px; border-radius: 50%; background: #ffffff; box-shadow: 0 0 0 3px rgb(255 255 255 / 0.3); }
+.sc-player__topic { position: absolute; inset-block-end: 10px; inset-inline-start: 10px; display: flex; flex-direction: column; padding: 6px 10px; border: 1px solid var(--sc-line); border-radius: 10px; background: rgb(255 255 255 / 0.95); box-shadow: var(--sc-mock-shadow); }
+.sc-player__topic small { color: var(--sc-muted); font-size: var(--fs-caption); }
+.sc-player__bar { display: flex; align-items: center; gap: 10px; padding: 9px 12px; }
+.sc-player__play { display: grid; place-items: center; flex-shrink: 0; inline-size: 28px; block-size: 28px; border-radius: 50%; background: var(--sc-green); color: #fff; }
+.sc-player__track { position: relative; flex: 1; block-size: 4px; border-radius: 2px; background: var(--sc-line); }
+.sc-player__track i { position: absolute; inset-block: 0; inset-inline-start: 0; inline-size: 44%; border-radius: inherit; background: var(--sc-green); }
+.sc-player__time { color: var(--sc-muted); font-variant-numeric: tabular-nums; white-space: nowrap; direction: ltr; }
+.sc-player__vol { display: inline-flex; color: var(--sc-muted); }
+
+/* ==========================================================================
+   02 · Visual-first cards
+   ========================================================================== */
+.vcard-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(1rem, 0.75rem + 1vw, 1.5rem); }
+.vcard {
+  display: grid;
+  grid-row: span 2;
+  grid-template-rows: subgrid; /* visuals and titles line up across the row */
+  row-gap: 0;
+  padding: var(--space-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+  box-shadow: var(--card-shadow);
+  transition: translate var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out), border-color var(--dur-base) var(--ease-out);
+}
+.vcard:hover { translate: 0 -4px; box-shadow: var(--card-shadow-hover); border-color: var(--color-border-strong); }
+.vcard__body { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-2); padding: var(--space-5) var(--space-4) var(--space-4); }
+.vcard__title { font-size: var(--fs-h3); line-height: var(--lh-h3); font-weight: var(--weight-bold); color: var(--color-heading); }
+.vcard__text { font-size: var(--fs-body-sm); line-height: var(--lh-body); color: var(--color-text-muted); }
+.vcard__cta { margin-block-start: auto; padding-block-start: var(--space-2); }
+
+/* ==========================================================================
+   03 · Available now / coming next — editorial cards
+   Status → title → text → CTA, then soft-clay artwork anchored to the bottom
+   (lower ~half of the card). Text never overlaps the art.
+   ========================================================================== */
+.ed-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--grid-gap); }
+.ed-card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: var(--radius-panel);
+  background: var(--color-surface-subtle);
+}
+.ed-card--soon { background: var(--color-surface-sunken); }
+.ed-card__body { flex: 0 0 auto; display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-2); padding: clamp(1.5rem, 1.2rem + 1vw, 2rem) clamp(1.5rem, 1.2rem + 1vw, 2rem) var(--space-2); }
+.ed-card__body .badge { margin-block-end: var(--space-1); }
+.ed-card__title { font-size: var(--fs-title); line-height: var(--lh-title); font-weight: var(--fw-heading); color: var(--color-heading); letter-spacing: var(--tracking-tight); }
+.ed-card__text { max-inline-size: 30rem; font-size: var(--fs-body-sm); line-height: var(--lh-body); color: var(--color-text-muted); }
+.ed-card__cta { margin-block-start: var(--space-2); }
+.ed-card__art {
+  /* Sized by the artwork itself: full card width at the image's own aspect ratio, anchored
+     to the bottom edge → no empty band, no stretching, no cropping. */
+  position: relative;
+  flex: 0 0 auto;
+  margin-block-start: auto;        /* if the row makes this card taller, the gap sits above the art */
+  display: flex;
+  justify-content: center;
+  padding: var(--space-4) var(--space-4) 0;
+  overflow: hidden;
+}
+.ed-card__render {
+  display: block;
+  inline-size: 100%;
+  max-inline-size: 36rem;
+  block-size: auto;                /* width/height attributes give the true ratio → no layout shift */
+  object-fit: contain;
+  object-position: center bottom;
+  transform: translateY(6px);      /* rests 6px into the card edge (white margin) so the lift never shows a gap */
+  transition: transform 500ms var(--ease-out);
+}
+/* Light theme: the PNGs' pure-white backgrounds take on the card colour exactly */
+:root:not([data-theme="dark"]) .ed-card__render {
+  mix-blend-mode: multiply;
+  /* The PNG backgrounds are near-white at their edges (slight vignette/border); fade the top and
+     side edges so no rectangle shows. Subjects sit well inside these margins. */
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 9%, #000 91%, transparent), linear-gradient(to bottom, transparent, #000 12%);
+  -webkit-mask-composite: source-in;
+          mask-image: linear-gradient(to right, transparent, #000 9%, #000 91%, transparent), linear-gradient(to bottom, transparent, #000 12%);
+          mask-composite: intersect;
+}
+/* Dark theme: a white background can't disappear → a clean panel rising from the bottom edge */
+:root[data-theme="dark"] .ed-card__render { border-radius: 18px 18px 0 0; box-shadow: 0 -1px 0 rgb(255 255 255 / 0.06), var(--shadow-md); }
+.ed-card:is(:hover, :focus-within) .ed-card__render { transform: translateY(0); } /* 6px lift */
+/* Artwork not supplied yet: keep the reserved surface clean (no broken-image icon) */
+.ed-card__art.is-missing .ed-card__render { visibility: hidden; }
+
+@media (max-width: 719px) {
+  .ed-grid { grid-template-columns: minmax(0, 1fr); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ed-card__render { transition: none; }
+  .ed-card:is(:hover, :focus-within) .ed-card__render { transform: translateY(6px); }
+}
+
+/* ==========================================================================
+   04 · Characters in action — scroll story
+   Default (no JS · mobile · tablet): vertical chapters, each with its own visual.
+   .is-live (desktop, JS): sticky stage + chapters that drive it.
+   ========================================================================== */
+.story__stage { display: none; }
+.story__chapters { display: flex; flex-direction: column; gap: clamp(2rem, 1.5rem + 2vw, 3rem); }
+.story__chapter { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); align-items: center; gap: clamp(1.25rem, 1rem + 2vw, 3rem); }
+.story__visual .sc-visual { border: 1px solid var(--color-border); box-shadow: var(--card-shadow); }
+.story__copy { display: flex; flex-direction: column; gap: var(--space-2); }
+.story__kicker { display: inline-flex; align-items: center; gap: var(--space-2); font-size: var(--fs-label); font-weight: var(--weight-semibold); color: var(--color-primary); }
+.story__num { font-variant-numeric: tabular-nums; color: var(--color-text-subtle); }
+.story__title { font-size: var(--fs-h3); line-height: var(--lh-h3); font-weight: var(--weight-bold); color: var(--color-heading); }
+.story__text { font-size: var(--fs-body); line-height: var(--lh-body); color: var(--color-text-muted); max-inline-size: 30rem; }
+.story__note { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: var(--space-2) var(--space-3); max-inline-size: 52rem; margin: var(--space-8) auto 0; color: var(--color-text-muted); font-size: var(--fs-label); text-align: center; }
+.story__note > .icon { flex-shrink: 0; color: var(--color-primary); }
+
+/* Live (desktop) */
+.story.is-live { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: clamp(2rem, 1rem + 3vw, 4rem); }
+.story.is-live .story__stage { display: block; }
+.story.is-live .story__sticky {
+  position: sticky;
+  inset-block-start: calc(var(--header-h) + var(--space-6));
+  block-size: min(32rem, calc(100vh - var(--header-h) - var(--space-10)));
+}
+.story.is-live .story__scene {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--dur-slow) var(--ease-out), visibility 0s linear var(--dur-slow);
+}
+.story.is-live .story__scene.is-active { opacity: 1; visibility: visible; transition: opacity var(--dur-slow) var(--ease-out), visibility 0s; }
+.story.is-live .sc-visual--stage { block-size: 100%; border: 1px solid var(--color-border); border-radius: var(--radius-xl); box-shadow: var(--card-shadow); }
+.story.is-live .story__chapters { gap: 0; }
+.story.is-live .story__chapter { display: flex; min-block-size: 58vh; }
+.story.is-live .story__chapter:last-child { min-block-size: 44vh; }
+.story.is-live .story__visual { display: none; }
+.story.is-live .story__copy { opacity: 0.38; transition: opacity var(--dur-base) var(--ease-out); }
+.story.is-live .story__chapter.is-active .story__copy { opacity: 1; }
+.story.is-live .story__chapter.is-active .story__num { color: var(--color-primary); }
+
+/* ==========================================================================
+   05 · Showcase + closing CTA
+   ========================================================================== */
+.char-row { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(0.75rem, 0.5rem + 1vw, 1.25rem); }
+.char-tile__link { display: flex; flex-direction: column; gap: var(--space-1); border-radius: var(--radius-lg); }
+.char-tile .cmedia { margin-block-end: var(--space-2); border-radius: var(--radius-lg); box-shadow: inset 0 0 0 1px var(--color-border); transition: translate var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out); }
+.char-tile__link:hover .cmedia { translate: 0 -4px; box-shadow: inset 0 0 0 1px var(--color-border-strong), var(--card-shadow-hover); }
+.char-tile__name { font-size: var(--fs-body); font-weight: var(--weight-semibold); color: var(--color-text); padding-inline: 2px; }
+.char-tile__type { font-size: var(--fs-label); color: var(--color-text-muted); padding-inline: 2px; }
+.char-tile__link:focus-visible { outline-offset: 4px; }
+
+.closing {
+  display: flex;
+  flex-direction: column;
+  margin-block-start: clamp(3.5rem, 2.5rem + 4vw, 6rem);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-2xl);
+  background: radial-gradient(70% 90% at 50% 0%, var(--color-accent-soft), transparent 70%), var(--color-surface);
+  text-align: center;
+  overflow: hidden; /* the artwork is anchored to the bottom edge and takes the card's corners */
+}
+.closing__body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  padding: clamp(2rem, 1.5rem + 3vw, 3.5rem) var(--space-6) clamp(2rem, 1.5rem + 2vw, 3rem);
+}
+.closing__title { font-size: var(--fs-h2); line-height: var(--lh-h2); font-weight: var(--weight-bold); color: var(--color-heading); letter-spacing: var(--tracking-tight); text-wrap: balance; }
+.closing__text { max-inline-size: 34rem; font-size: var(--fs-lead); color: var(--color-text-muted); text-wrap: pretty; }
+.closing .btn { margin-block-start: var(--space-2); }
+
+/* Closing artwork: sits under the CTA, anchored to the card's bottom edge (the card clips the
+   last few px of the studio floor). Light theme: multiply + a soft elliptical fade turn the image's
+   near-white backdrop into the card surface itself — no box, no edge. Dark theme: a white backdrop can't blend into a dark
+   card, so it reads as a soft rounded panel rising from the bottom edge. */
+.closing__art {
+  display: flex;
+  justify-content: center;
+  padding-inline: var(--space-4);
+}
+.closing__img {
+  display: block;
+  inline-size: 100%;
+  max-inline-size: 52rem;
+  block-size: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: contain;
+  margin-block-end: -4px;
+}
+:root:not([data-theme="dark"]) .closing__img {
+  mix-blend-mode: multiply;
+  /* the backdrop is near-white, not pure white: one soft ellipse dissolves its faint edges so no
+     rectangle shows; the head, fragments and plinth stay fully opaque */
+  -webkit-mask-image: radial-gradient(ellipse 52% 68% at 50% 70%, #000 66%, transparent 100%);
+          mask-image: radial-gradient(ellipse 52% 68% at 50% 70%, #000 66%, transparent 100%);
+}
+:root[data-theme="dark"] .closing__img { border-radius: 18px 18px 0 0; }
+
+/* ==========================================================================
+   Motion — staggered entrance via the site reveal system; scene-linked in the story
+   ========================================================================== */
+.sc-a { transition: opacity var(--dur-reveal) var(--ease-out) var(--d, 0ms), translate var(--dur-reveal) var(--ease-out) var(--d, 0ms); }
+.reveal-ready [data-reveal]:not(.is-revealed) .sc-a { opacity: 0; translate: 0 10px; }
+.story.is-live .story__scene:not(.is-active) .sc-a { opacity: 0; translate: 0 10px; transition-delay: 0ms; }
+.sc-float { animation: sc-float 7s var(--ease-in-out) infinite; }
+.sc-player__topic.sc-float { animation-delay: -3s; }
+@keyframes sc-float { 50% { transform: translateY(-4px); } }
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+@media (max-width: 1099px) {
+  .vcard-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .vcard:last-child { grid-column: 1 / -1; grid-row: auto; grid-template-rows: none; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); align-items: center; }
+}
+@media (max-width: 899px) {
+  .story__chapter { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 719px) {
+  .vcard-grid { grid-template-columns: minmax(0, 1fr); }
+  .vcard, .vcard:last-child { grid-row: auto; grid-template-rows: none; grid-template-columns: minmax(0, 1fr); }
+  .sc-visual { min-height: 17rem; }
+  .sc-tip { inset-inline-end: 0; }
+  /* Showcase: gentle horizontal swipe instead of a tall stack */
+  .char-row {
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    grid-auto-columns: 62%;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    padding-block-end: var(--space-3);
+    scrollbar-width: thin;
+  }
+  .char-tile { scroll-snap-align: start; }
+  .closing__body { padding-inline: var(--space-5); }
+  .closing__art { padding-inline: var(--space-3); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vcard, .sc-a, .char-tile .cmedia, .story.is-live .story__scene, .story.is-live .story__copy { transition: none; }
+  .vcard:hover, .char-tile__link:hover .cmedia { translate: none; }
+  .sc-float, .sc-typing span { animation: none; }
+  .sc-typing span { opacity: 0.6; }
+}
+
+.home-showcase .center-cta { align-items: center; }
+
+/* ==========================================================================
+   Services hub (/services) — reuses the visual cards above
+   ========================================================================== */
+.services { display: flex; flex-direction: column; gap: clamp(2rem, 1.5rem + 2vw, 3rem); padding-block-end: var(--section-y); }
+.services-more ul { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--grid-gap); }
+.services-more__link {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 56px;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+  font-size: var(--fs-small);
+  font-weight: var(--fw-semibold);
+  color: var(--color-text);
+  transition: border-color var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
+}
+.services-more__link:hover { border-color: var(--color-border-strong); box-shadow: var(--card-shadow); }
+.services-more__link > .icon:last-child { margin-inline-start: auto; --icon-size: 16px; color: var(--color-primary); }
+.services-more__ic { display: grid; place-items: center; flex-shrink: 0; inline-size: 32px; block-size: 32px; border-radius: var(--radius-sm); background: var(--color-accent-soft); color: var(--color-primary); }
+.services-more__ic .icon { --icon-size: 16px; }
+@media (max-width: 899px) { .services-more ul { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 479px) { .services-more ul { grid-template-columns: minmax(0, 1fr); } }
+
+/* ==========================================================================
+   02 · Abstract service illustrations (product-scenes.js → readyArt / designArt / integrateArt)
+   Theme-aware (tokens flip in dark). Shared language: 1.5 strokes, 12 radius tiles,
+   paper / soft / mid / ink. Idle: one slow float per card; hover/focus adds motion.
+   ========================================================================== */
+.sc-visual--art {
+  background:
+    radial-gradient(60% 55% at 50% 45%, var(--color-surface), transparent 75%),
+    radial-gradient(circle, var(--art-dot) 1px, transparent 1.2px) 0 0 / 16px 16px,
+    var(--color-surface-subtle);
+  padding: clamp(1rem, 0.75rem + 1vw, 1.5rem);
+  color: var(--color-text-primary);
+}
+.art {
+  --art-paper: var(--color-surface);
+  --art-soft: var(--n-100);
+  --art-soft-strong: var(--n-150);
+  --art-mid: var(--n-300);
+  --art-ink: var(--n-900);
+  --art-line: var(--n-150);
+  --art-line-strong: var(--n-400);
+  display: block;
+  inline-size: 100%;
+  max-inline-size: 22rem;
+  block-size: auto;
+  aspect-ratio: 320 / 220; /* reserves space → no layout shift */
+  overflow: visible;
+}
+.sc-visual--art { --art-dot: rgb(20 20 19 / 0.07); }
+:root[data-theme="dark"] .sc-visual--art { --art-dot: rgb(245 245 242 / 0.06); }
+
+.art-paper { fill: var(--art-paper); stroke: var(--art-line); stroke-width: 1.5; }
+.art-paper-fill { fill: var(--art-paper); }
+.art-soft { fill: var(--art-soft); }
+.art-soft-strong { fill: var(--art-soft-strong); }
+.art-mid { fill: var(--art-mid); }
+.art-mid-dot { fill: var(--art-mid); }
+.art-ink { fill: var(--art-ink); }
+.art-line-fill { fill: var(--art-paper); stroke: var(--art-line); stroke-width: 1.5; }
+.art-edge { stroke: var(--art-line-strong); stroke-width: 1.5; stroke-linejoin: round; }
+.art-stroke { fill: none; stroke: var(--art-ink); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.art-stroke-ink { fill: none; stroke: var(--art-ink); stroke-width: 2.5; stroke-linecap: round; }
+.art-check { fill: none; stroke: var(--art-paper); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.art-guide { fill: none; stroke: var(--art-line-strong); stroke-width: 1.5; stroke-dasharray: 3 5; stroke-linecap: round; }
+.art-ring { fill: none; stroke: var(--art-ink); stroke-width: 1.5; stroke-dasharray: 2 9; stroke-linecap: round; opacity: 0.35; }
+.art-knob { fill: var(--art-paper); stroke: var(--art-ink); stroke-width: 1.5; }
+.art-link { stroke: var(--art-line-strong); stroke-width: 1.5; stroke-dasharray: 2 5; stroke-linecap: round; }
+.art-node { fill: var(--art-paper); stroke: var(--art-line-strong); stroke-width: 1.5; }
+.art-pulse { stroke: var(--art-ink); stroke-width: 2; stroke-linecap: round; stroke-dasharray: 8 100; stroke-dashoffset: 8; opacity: 0; }
+
+/* Transforms act on each shape's own box */
+.art g, .art rect, .art circle, .art path { transform-box: fill-box; transform-origin: center; }
+
+/* Idle: one slow float per card */
+.art-float { animation: art-float 6s var(--ease-in-out) infinite; }
+@keyframes art-float { 50% { transform: translateY(-4px); } }
+
+/* Hover / focus reactions */
+.art-tile, .art-mod, .art-ring, .art-knob, .art-slider__fill { transition: transform 600ms var(--ease-out); }
+.art-tile--l { transform: rotate(-7deg); }
+.art-tile--r { transform: rotate(7deg); }
+.vcard:is(:hover, :focus-within) .art-tile--l { transform: rotate(-11deg) translateX(-8px); }
+.vcard:is(:hover, :focus-within) .art-tile--r { transform: rotate(11deg) translateX(8px); }
+.vcard:is(:hover, :focus-within) .art-tile--c { transform: translateY(-4px); }
+
+.art-slider__fill { transform-origin: left center; }
+.vcard:is(:hover, :focus-within) .art-knob--a { transform: translateX(-26px); }
+.vcard:is(:hover, :focus-within) .art-slider__fill:not(.art-slider__fill--b) { transform: scaleX(0.63); }
+.vcard:is(:hover, :focus-within) .art-knob--b { transform: translateX(34px); }
+.vcard:is(:hover, :focus-within) .art-slider__fill--b { transform: scaleX(1.9); }
+.vcard:is(:hover, :focus-within) .art-mod--sq { transform: rotate(45deg); }
+.vcard:is(:hover, :focus-within) .art-mod--dot { transform: translate(-6px, -4px); }
+.vcard:is(:hover, :focus-within) .art-ring { transform: rotate(40deg); }
+
+.vcard:is(:hover, :focus-within) .art-pulse { animation: art-pulse 1.6s var(--ease-in-out) var(--d, 0s) infinite; }
+@keyframes art-pulse { 0% { stroke-dashoffset: 8; opacity: 0; } 15% { opacity: 1; } 85% { opacity: 1; } 100% { stroke-dashoffset: -100; opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .art-float, .vcard:is(:hover, :focus-within) .art-pulse { animation: none; }
+  .art-tile, .art-mod, .art-ring, .art-knob, .art-slider__fill { transition: none; }
+}
+
+/* Supplied card artwork (What we offer): the illustration area takes the image's own shape,
+   so object-fit: contain fills it edge to edge — no letterboxing, no cropping, no distortion.
+   All three images share 1376×768, so the three areas match exactly. */
+.sc-visual--photo {
+  min-height: 0;
+  padding: 0;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  /* Matches the supplied renders' studio backdrop (measured ≈ #e6e6de) for the instant before load */
+  background: #e6e6de;
+}
+.sc-photo {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: contain;
+  object-position: center;
+  transition: transform 600ms var(--ease-out);
+}
+.vcard:is(:hover, :focus-within) .sc-photo { transform: scale(1.02); }
+@media (prefers-reduced-motion: reduce) {
+  .sc-photo { transition: none; }
+  .vcard:is(:hover, :focus-within) .sc-photo { transform: none; }
+}

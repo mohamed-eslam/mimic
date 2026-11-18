@@ -104,7 +104,7 @@ export const aiPage = withReveal(() => `
     <div class="container soon">
       <div class="soon__copy" data-reveal>
         ${availabilityBadge(BUSINESS.offerings.aiGeneration)}
-        <p class="eyebrow">${t('aiPage.eyebrow')}</p>
+        <p class="eyebrow eyebrow--pill">${t('aiPage.eyebrow')}</p>
         <h1 class="page-hero__title">${t('aiPage.title')}</h1>
         <p class="page-hero__lead">${t('aiPage.description')}</p>
         <div class="soon__planned">

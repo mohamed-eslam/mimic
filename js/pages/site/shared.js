@@ -28,7 +28,7 @@ export const pageHero = ({ eyebrow, title, description, actions = '', aside = ''
   <section class="site-section page-hero ${aside ? 'page-hero--split' : ''}">
     <div class="container page-hero__grid">
       <div class="page-hero__copy" data-reveal>
-        <p class="eyebrow">${eyebrow}</p>
+        <p class="eyebrow eyebrow--pill">${eyebrow}</p>
         <h1 class="page-hero__title">${title}</h1>
         <p class="page-hero__lead">${description}</p>
         ${actions ? `<div class="hero-b__actions">${actions}</div>` : ''}

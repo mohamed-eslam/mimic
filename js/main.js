@@ -7,6 +7,7 @@ import { qs } from './core/dom.js';
 import { initI18n, setLocale, getLocale } from './i18n/index.js';
 import { renderChrome, setRoute } from './ui/chrome.js';
 import { assetReport } from './services/asset-service.js';
+import { initCharacterVideos } from './ui/character-video.js';
 
 async function init() {
   await initI18n();
@@ -37,6 +38,7 @@ async function init() {
   });
 
   router.start();
+  initCharacterVideos(); // autoplay real character clips while visible (muted, lazy, capped)
   // Debug helpers: CharacterLab.assetReport() lists missing character images
   window.CharacterLab = { router, i18n: { setLocale, getLocale }, assetReport };
 }

@@ -20,7 +20,7 @@ export default {
     return `
       <section class="site-section">
         <div class="container finder">
-          <p class="eyebrow">${t('nav.solutions')}</p>
+          <p class="eyebrow eyebrow--pill">${t('nav.solutions')}</p>
           <h1 class="page-hero__title">${t('solutions.title')}</h1>
           <p class="page-hero__lead">${t('solutions.description')}</p>
           <fieldset class="finder__q"><legend>${t('solutions.whoTitle')}</legend>

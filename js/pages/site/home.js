@@ -1,194 +1,229 @@
 /**
- * Marketing homepage — answers: who it's for, what customers get, how they get
- * a character, what it's for, what's available now vs coming soon, how to contact us.
+ * Marketing homepage — five sections, visual-first:
+ *   01 Hero · 02 What we offer · 03 Available now / coming soon
+ *   04 Characters in action (scroll story) · 05 Character showcase + final CTA
+ *
+ * Inner pages, catalog data and older homepage copy are untouched; the homepage
+ * simply no longer renders the earlier sections (audiences, ways, packages, uses…).
  */
 import { disposer } from '../../core/dom.js';
-import { t, tl } from '../../i18n/index.js';
+import { t, tl, pick } from '../../i18n/index.js';
 import { icon } from '../../ui/icons.js';
 import { revealOnScroll } from '../../ui/reveal.js';
-import { hydrateCharacterMedia } from '../../ui/character-media.js';
+import { mountScrollStory } from '../../ui/scroll-story.js';
+import { mountArcCarousel } from '../../ui/arc-carousel.js';
+import { characterMedia, hydrateCharacterMedia, motionToggle } from '../../ui/character-media.js';
 import { BUSINESS } from '../../config/business.js';
 import { findListing } from '../../data/catalog.js';
-import { btn, sectionHead, availabilityBadge, packageCards, talentStrip, slaText } from './shared.js';
+import { btn, sectionHead, availabilityBadge } from './shared.js';
+import {
+  visualCard, sceneFrame, cardImage, STORY_CHAPTERS,
+} from './product-scenes.js';
 
-const OFFER_ICONS = { realistic: 'smile', ready: 'grid', custom: 'brief', avatar: 'image', agent: 'sparkle', campaign: 'megaphone', integration: 'code' };
-const WAY_LINKS = { marketplace: '#/marketplace', custom: '#/brief', ai: '#/ai-generation' };
-const WAY_STATUS = { marketplace: BUSINESS.offerings.marketplace, custom: BUSINESS.offerings.custom, ai: BUSINESS.offerings.aiGeneration };
-const WAY_ICONS = { marketplace: 'grid', custom: 'brief', ai: 'sparkle' };
+/* Hero arc: every catalog character; index 5 starts in the centre (Reem). */
+const HERO_CAST = ['lina', 'faisal', 'nova', 'salma', 'milo', 'reem', 'karim', 'nour', 'omar', 'adam'];
+/* Showcase: four other characters (no repeats with the hero); Milo has a clip too. */
+const SHOWCASE_CAST = ['milo', 'adam', 'lina', 'karim'];
 
-export default {
-  render() {
-    const hero = ['faisal', 'reem', 'karim'].map(findListing);
-    const offer = tl('home.offer.items');
-    const ways = tl('home.ways.items');
-    const process = tl('home.process.items');
+const art = (file) => `assets/characters/${encodeURIComponent(file)}`;  // supplied images (original filenames)
+const arrow = () => icon('arrowRight', { className: 'flip-rtl' });
+const cast = (ids) => ids.map(findListing).filter(Boolean);
 
-    return `
-      <!-- Hero -->
-      <section class="site-section hero-b" aria-labelledby="hero-title">
-        <div class="container hero-b__grid">
-          <div class="hero-b__copy" data-reveal>
-            <p class="eyebrow">${t('home.hero.eyebrow')}</p>
-            <h1 id="hero-title" class="hero-b__title">${t('home.hero.title')}</h1>
-            <p class="hero-b__lead">${t('home.hero.description')}</p>
-            <div class="hero-b__actions">
-              ${btn(t('cta.exploreCharacters'), '#/marketplace', 'primary')}
-              ${btn(t('cta.createCustom'), '#/brief', 'secondary')}
+/* ---------- 01 · Hero ---------- */
+function hero() {
+  const people = cast(HERO_CAST);
+  return `
+    <section class="site-section hero-b hero-c" aria-labelledby="hero-title">
+      <div class="container hero-c__inner">
+        <div class="hero-c__copy" data-reveal>
+          <p class="eyebrow eyebrow--pill">${t('home.hero.eyebrow')}</p>
+          <h1 id="hero-title" class="hero-b__title">${t('home.hero.title')}</h1>
+          <p class="hero-b__lead">${t('home.hero.description')}</p>
+          <div class="hero-b__actions">
+            <a class="btn btn--primary btn--lg" href="#/marketplace"><span>${t('cta.exploreCharacters')}</span>${icon('arrowRight', { className: 'flip-rtl btn__arrow' })}</a>
+            ${btn(t('cta.createCustom'), '#/brief', 'secondary')}
+          </div>
+        </div>
+        ${people.some((l) => !l.media?.image) ? `<p class="hero-talent__note hero-c__note">${icon('info', { size: 14 })} ${t('home.hero.visualNote')}</p>` : ''}
+      </div>
+      <div class="arc" data-arc data-reveal="1" role="group" aria-roledescription="carousel" aria-label="${t('home.hero.castLabel')}">
+        <div class="arc__track" data-arc-track>
+          ${people.map((l) => `
+            <a class="arc__card" data-arc-card href="#/marketplace?character=${l.id}" draggable="false">
+              ${characterMedia(l, { size: 'hero', label: false })}
+              <span class="arc__label">${l.media?.video ? `<span class="arc__play" aria-hidden="true">${icon('play', { size: 14 })}</span>` : ''}<span>${pick(l.name)}</span></span>
+            </a>`).join('')}
+        </div>
+      </div>
+      <div class="container arc-controls">
+        <button type="button" class="arc__toggle" data-arc-toggle aria-pressed="false" aria-label="${t('media.pauseCarousel')}">${icon('pause', { className: 'arc__toggle-pause' })}${icon('play', { className: 'arc__toggle-play' })}</button>
+      </div>
+    </section>`;
+}
+
+/* ---------- 02 · What we offer ---------- */
+function offer() {
+  const o = (k) => t(`home.offerCards.${k}`);
+  const cards = [
+    // Supplied artwork (assets/characters/; note the third file is named card-3.png)
+    { id: 'ready', visual: cardImage(art('card1.png'), 1376, 768), photo: true, href: '#/marketplace', cta: t('cta.exploreCharacters') },
+    { id: 'custom', visual: cardImage(art('card2.png'), 1376, 768), photo: true, href: '#/brief', cta: t('cta.createCustom') },
+    { id: 'integration', visual: cardImage(art('card-3.png'), 1376, 768), photo: true, href: '#/request-integration', cta: t('cta.requestIntegration') },
+  ].map((c) => ({
+    ...c,
+    title: o(`${c.id}.title`),
+    text: o(`${c.id}.text`),
+    label: o(`${c.id}.label`),
+    cta: `<a class="link-arrow vcard__cta" href="${c.href}">${c.cta} ${arrow()}</a>`,
+  }));
+  return `
+    <section class="site-section home-offer" aria-labelledby="offer-title">
+      <div class="container">
+        ${sectionHead(o('title'), '', 'offer-title')}
+        <div class="vcard-grid">${cards.map(visualCard).join('')}</div>
+      </div>
+    </section>`;
+}
+
+/* ---------- 03 · Available now / coming next ---------- */
+/**
+ * Artwork for the two cards (supplied PNGs, original filenames kept; ~16:9, white background):
+ *   Available Now → assets/characters/available.png     (three sculptural heads on stands)
+ *   Coming Soon   → assets/characters/comming soon.png  (one head split into material layers)
+ * White backgrounds melt into the card in light theme (multiply); framed panel in dark (css/home.css).
+ * If a file is missing its container stays a clean reserved surface (no broken image).
+ */
+const STATUS_ART = {
+  now: { src: art('available.png'), w: 2560, h: 1440 },
+  soon: { src: art('comming soon.png'), w: 1376, h: 768 },
+};
+
+function statusCard({ id, badge, title, text, cta, artLabel, image }) {
+  return `
+    <article class="ed-card ed-card--${id}" data-reveal="${id === 'soon' ? 1 : 0}">
+      <div class="ed-card__body">
+        ${badge}
+        <h3 class="ed-card__title">${title}</h3>
+        <p class="ed-card__text">${text}</p>
+        ${cta ?? ''}
+      </div>
+      <div class="ed-card__art" data-art-slot>
+        <img class="ed-card__render" src="${image.src}" alt="${artLabel}" width="${image.w}" height="${image.h}" loading="lazy" decoding="async">
+      </div>
+    </article>`;
+}
+
+function status() {
+  const c = (k) => t(`home.statusCards.${k}`);
+  const soonLive = BUSINESS.offerings.aiGeneration === 'available'; // never claim it before it is
+  return `
+    <section class="site-section home-status" aria-labelledby="status-title">
+      <div class="container">
+        <header class="section-head" data-reveal>
+          <h2 class="section-head__title" id="status-title">${c('title')}</h2>
+          <p class="section-head__intro">${c('intro')}</p>
+        </header>
+        <div class="ed-grid">
+          ${statusCard({
+            id: 'now',
+            badge: availabilityBadge('available'),
+            title: c('nowTitle'), text: c('nowText'),
+            cta: `<a class="link-arrow ed-card__cta" href="#/marketplace">${t('cta.exploreCharacters')} ${arrow()}</a>`,
+            artLabel: c('nowArt'), image: STATUS_ART.now,
+          })}
+          ${statusCard({
+            id: 'soon',
+            badge: availabilityBadge(soonLive ? 'available' : 'coming-soon'),
+            title: c('soonTitle'), text: c('soonText'),
+            // A real information page exists (/ai-generation) — a quiet link, not a "start" action.
+            cta: `<a class="link-arrow ed-card__cta" href="#/ai-generation">${tl('home.ways.items')[2].cta} ${arrow()}</a>`,
+            artLabel: c('soonArt'), image: STATUS_ART.soon,
+          })}
+        </div>
+      </div>
+    </section>`;
+}
+
+/* ---------- 04 · Characters in action (scroll story) ---------- */
+function story() {
+  const s = (k) => t(`home.story.${k}`);
+  return `
+    <section class="site-section home-story" aria-labelledby="story-title">
+      <div class="container">
+        ${sectionHead(s('title'), s('intro'), 'story-title')}
+        <div class="story" data-story>
+          <div class="story__stage" data-story-stage>
+            <div class="story__sticky">
+              ${STORY_CHAPTERS.map((c) => `
+                <div class="story__scene" data-scene="${c.id}">${sceneFrame(s(`${c.key}.label`), c.scene(), 'sc-visual--stage')}</div>`).join('')}
             </div>
-            <a class="link-arrow" href="#/contact">${t('cta.talkToTeam')} ${icon('arrowRight', { className: 'flip-rtl' })}</a>
           </div>
-          <figure class="hero-talent" data-reveal="1">
-            ${talentStrip(hero)}
-            <figcaption class="hero-talent__note">${icon('info', { size: 14 })} ${t('home.hero.visualNote')}</figcaption>
-          </figure>
-        </div>
-      </section>
-
-      <!-- Who it's for -->
-      <section class="site-section site-section--tight" aria-labelledby="aud-title">
-        <div class="container">
-          ${sectionHead(t('home.audiences.title'), '', 'aud-title')}
-          <div class="audiences">
-            ${['business', 'creators'].map((k, i) => `
-              <a class="audience-card audience-card--${k}" href="#/${k}" data-reveal="${i}">
-                <span class="audience-card__icon">${icon(k === 'business' ? 'flag' : 'smile')}</span>
-                <h3 class="audience-card__title">${t(`home.audiences.${k}.title`)}</h3>
-                <p class="audience-card__text">${t(`home.audiences.${k}.text`)}</p>
-                <span class="link-arrow">${t(`home.audiences.${k}.cta`)} ${icon('arrowRight', { className: 'flip-rtl' })}</span>
-              </a>`).join('')}
-          </div>
-        </div>
-      </section>
-
-      <!-- What we provide -->
-      <section class="site-section site-section--tinted" aria-labelledby="offer-title">
-        <div class="container">
-          ${sectionHead(t('home.offer.title'), '', 'offer-title')}
-          <div class="offer-grid">
-            ${offer.map((o, i) => `
-              <article class="offer-item" data-reveal="${i % 4}">
-                <span class="offer-item__icon">${icon(OFFER_ICONS[o.id])}</span>
-                <div><h3>${o.title}</h3><p>${o.text}</p></div>
-              </article>`).join('')}
-          </div>
-        </div>
-      </section>
-
-      <!-- Three ways -->
-      <section class="site-section" aria-labelledby="ways-title">
-        <div class="container">
-          ${sectionHead(t('home.ways.title'), t('home.ways.intro'), 'ways-title')}
-          <div class="ways">
-            ${ways.map((w, i) => `
-              <a class="way-card way-card--${w.id} ${WAY_STATUS[w.id] === 'coming-soon' ? 'is-soon' : ''}" href="${WAY_LINKS[w.id]}" data-reveal="${i}" data-way="${w.id}">
-                <span class="way-card__icon">${icon(WAY_ICONS[w.id])}</span>
-                ${availabilityBadge(WAY_STATUS[w.id])}
-                <h3 class="way-card__title">${w.title}</h3>
-                <p class="way-card__text">${w.text}</p>
-                <span class="link-arrow">${w.cta} ${icon('arrowRight', { className: 'flip-rtl' })}</span>
-              </a>`).join('')}
-          </div>
-        </div>
-      </section>
-
-      <!-- Integration -->
-      <section class="site-section site-section--dark" aria-labelledby="int-title">
-        <div class="container">
-          <div class="int-band">
-            <div class="int-band__copy" data-reveal>
-              <h2 id="int-title" class="section-head__title">${t('home.integration.title')}</h2>
-              <p class="int-band__text">${t('home.integration.text')}</p>
-            </div>
-            <div class="int-paths">
-              <a class="int-path" href="#/integration" data-reveal="1">
-                <span class="int-path__icon">${icon('download')}</span>
-                <h3>${t('home.integration.assetsTitle')}</h3>
-                <p>${t('home.integration.assetsText')}</p>
-                <span class="link-arrow">${t('cta.getAssets')} ${icon('arrowRight', { className: 'flip-rtl' })}</span>
-              </a>
-              <a class="int-path int-path--primary" href="#/request-integration" data-reveal="2">
-                <span class="int-path__icon">${icon('code')}</span>
-                <h3>${t('home.integration.integrateTitle')}</h3>
-                <p>${t('home.integration.integrateText')}</p>
-                <span class="link-arrow">${t('cta.requestIntegration')} ${icon('arrowRight', { className: 'flip-rtl' })}</span>
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Packages -->
-      <section class="site-section" aria-labelledby="pkg-title">
-        <div class="container">
-          ${sectionHead(t('home.packages.title'), t('home.packages.intro'), 'pkg-title')}
-          ${packageCards({ compact: true })}
-          <div class="center-cta"><a class="btn btn--secondary" href="#/packages">${t('cta.viewPackages')}</a></div>
-        </div>
-      </section>
-
-      <!-- Uses -->
-      <section class="site-section site-section--tinted" aria-labelledby="uses-title">
-        <div class="container">
-          ${sectionHead(t('home.uses.title'), '', 'uses-title')}
-          <div class="uses-split">
-            ${['business', 'creators'].map((k, i) => `
-              <div class="uses-col" data-reveal="${i}">
-                <h3>${t(`home.uses.${k}Title`)}</h3>
-                <ul role="list">${tl(`home.uses.${k}`).map((u) => `<li>${icon('check')}<span>${u}</span></li>`).join('')}</ul>
-              </div>`).join('')}
-          </div>
-        </div>
-      </section>
-
-      <!-- Process -->
-      <section class="site-section" aria-labelledby="proc-title">
-        <div class="container">
-          ${sectionHead(t('home.process.title'), slaText(), 'proc-title')}
-          <ol class="steps-b" role="list">
-            ${process.map((s, i) => `
-              <li class="step-b" data-reveal="${i}">
-                <span class="step-b__num">${String(i + 1).padStart(2, '0')}</span>
-                <h3 class="step-b__title">${s.title}</h3>
-                <p class="step-b__text">${s.text}</p>
+          <ol class="story__chapters" role="list">
+            ${STORY_CHAPTERS.map((c, i) => `
+              <li class="story__chapter" data-chapter="${c.id}" data-reveal>
+                <div class="story__visual">${sceneFrame(s(`${c.key}.label`), c.scene())}</div>
+                <div class="story__copy">
+                  <span class="story__kicker"><span class="story__num">${String(i + 1).padStart(2, '0')}</span>${s(`${c.key}.kicker`)}</span>
+                  <h3 class="story__title">${s(`${c.key}.title`)}</h3>
+                  <p class="story__text">${s(`${c.key}.text`)}</p>
+                </div>
               </li>`).join('')}
           </ol>
         </div>
-      </section>
+        <p class="story__note" data-reveal>${icon('info', { size: 14 })}<span>${s('note')}</span>
+          <a class="link-arrow" href="#/request-integration">${t('cta.requestIntegration')} ${arrow()}</a></p>
+      </div>
+    </section>`;
+}
 
-      <!-- Availability -->
-      <section class="site-section site-section--tinted" aria-labelledby="avail-title">
-        <div class="container">
-          ${sectionHead(t('home.availability.title'), '', 'avail-title')}
-          <div class="avail">
-            <div class="avail__col" data-reveal>
-              <h3>${availabilityBadge('available')}</h3>
-              <ul role="list">${tl('home.availability.nowItems').map((x) => `<li>${icon('check')}<span>${x}</span></li>`).join('')}</ul>
-            </div>
-            <div class="avail__col avail__col--soon" data-reveal="1">
-              <h3>${availabilityBadge('coming-soon')}</h3>
-              <ul role="list">${tl('home.availability.soonItems').map((x) => `<li>${icon('sparkle')}<span>${x}</span></li>`).join('')}</ul>
-            </div>
+/* ---------- 05 · Showcase + final CTA ---------- */
+function showcase() {
+  const people = cast(SHOWCASE_CAST);
+  return `
+    <section class="site-section home-showcase" aria-labelledby="showcase-title">
+      <div class="container">
+        ${sectionHead(t('home.showcase.title'), t('home.showcase.intro'), 'showcase-title')}
+        <ul class="char-row" role="list">
+          ${people.map((l, i) => `
+            <li class="char-tile" data-reveal="${i}">
+              <a class="char-tile__link" href="#/marketplace?character=${l.id}">
+                ${characterMedia(l, { size: 'card' })}
+                <span class="char-tile__name">${pick(l.name)}</span>
+                <span class="char-tile__type">${pick(l.title)}</span>
+              </a>
+            </li>`).join('')}
+        </ul>
+        <div class="center-cta">${btn(t('home.showcase.all'), '#/marketplace', 'secondary')}${people.some((l) => l.media?.video) ? motionToggle() : ''}</div>
+
+        <div class="closing" data-reveal>
+          <div class="closing__body">
+            <h2 class="closing__title">${t('home.closing.title')}</h2>
+            <p class="closing__text">${t('home.closing.text')}</p>
+            ${btn(t('cta.requestCustom'), '#/brief', 'primary')}
+          </div>
+          <!-- Decorative artwork: assets/characters/create.png (2560×1440, white studio backdrop) -->
+          <div class="closing__art">
+            <img class="closing__img" src="${art('create.png')}" alt="" width="2560" height="1440" loading="lazy" decoding="async">
           </div>
         </div>
-      </section>
+      </div>
+    </section>`;
+}
 
-      <!-- Final CTA -->
-      <section class="site-section final-cta" aria-labelledby="final-title">
-        <div class="container final-cta__inner" data-reveal>
-          <h2 id="final-title" class="final-cta__title">${t('home.final.title')}</h2>
-          <p class="section-head__intro">${t('home.final.text')}</p>
-          <div class="hero-b__actions">
-            ${btn(t('cta.createCustom'), '#/brief', 'primary')}
-            ${btn(t('cta.requestIntegration'), '#/request-integration', 'secondary')}
-            ${btn(t('cta.talkToTeam'), '#/contact', 'ghost')}
-          </div>
-        </div>
-      </section>`;
+export default {
+  render() {
+    return hero() + offer() + status() + story() + showcase();
   },
 
   mount(root) {
     const d = disposer();
     d.add(revealOnScroll(root));
+    d.add(mountScrollStory(root));
+    d.add(mountArcCarousel(root));
+    root.querySelectorAll('[data-art-slot] img').forEach((img) => {
+      const miss = () => img.closest('[data-art-slot]').classList.add('is-missing');
+      if (img.complete && !img.naturalWidth) miss(); else img.addEventListener('error', miss, { once: true });
+    });
     hydrateCharacterMedia(root);
     return () => d.run();
   },

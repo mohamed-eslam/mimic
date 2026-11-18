@@ -4,6 +4,8 @@
  * layout: 'site' → public marketing website (header + footer)
  *         'app'  → product workspace (sidebar)
  * nav:    'site' | 'app' | 'labs' | 'footer' — where the link appears
+ * section: parent nav path — child pages light up their section in the header
+ *          (e.g. Custom / Integration / Packages → "Services")
  * Labels come from i18n keys, so navigation follows the active locale.
  * Pages are lazy-loaded with dynamic import().
  */
@@ -20,15 +22,16 @@ const scaffold = (key, opts) => () => Promise.resolve({ default: placeholderPage
 
 export const routes = [
   /* ---------- Public website ---------- */
-  route({ path: '/', layout: 'site', labelKey: 'nav.home', load: () => import('../pages/site/home.js') }),
+  route({ path: '/', layout: 'site', nav: 'site', labelKey: 'nav.home', load: () => import('../pages/site/home.js') }),
   route({ path: '/marketplace', layout: 'site', nav: 'site', labelKey: 'nav.marketplace', shortKey: 'nav.marketplaceShort', load: () => import('../pages/site/marketplace.js') }),
-  route({ path: '/business', layout: 'site', nav: 'site', labelKey: 'nav.business', shortKey: 'nav.businessShort', load: async () => ({ default: (await import('../pages/site/segment.js')).businessPage }) }),
-  route({ path: '/creators', layout: 'site', nav: 'site', labelKey: 'nav.creators', shortKey: 'nav.creatorsShort', load: async () => ({ default: (await import('../pages/site/segment.js')).creatorsPage }) }),
-  route({ path: '/custom', layout: 'site', nav: 'site', labelKey: 'nav.custom', load: async () => ({ default: (await import('../pages/site/info-pages.js')).customPage }) }),
-  route({ path: '/integration', layout: 'site', nav: 'site', labelKey: 'nav.integration', shortKey: 'nav.integrationShort', load: async () => ({ default: (await import('../pages/site/info-pages.js')).integrationPage }) }),
-  route({ path: '/packages', layout: 'site', nav: 'site', labelKey: 'nav.packages', load: async () => ({ default: (await import('../pages/site/info-pages.js')).packagesPage }) }),
+  route({ path: '/services', layout: 'site', nav: 'site', labelKey: 'nav.services', load: () => import('../pages/site/services.js') }),
+  route({ path: '/business', layout: 'site', section: '/services', labelKey: 'nav.business', shortKey: 'nav.businessShort', load: async () => ({ default: (await import('../pages/site/segment.js')).businessPage }) }),
+  route({ path: '/creators', layout: 'site', section: '/services', labelKey: 'nav.creators', shortKey: 'nav.creatorsShort', load: async () => ({ default: (await import('../pages/site/segment.js')).creatorsPage }) }),
+  route({ path: '/custom', layout: 'site', section: '/services', labelKey: 'nav.custom', load: async () => ({ default: (await import('../pages/site/info-pages.js')).customPage }) }),
+  route({ path: '/integration', layout: 'site', section: '/services', labelKey: 'nav.integration', shortKey: 'nav.integrationShort', load: async () => ({ default: (await import('../pages/site/info-pages.js')).integrationPage }) }),
+  route({ path: '/packages', layout: 'site', section: '/services', labelKey: 'nav.packages', load: async () => ({ default: (await import('../pages/site/info-pages.js')).packagesPage }) }),
   route({ path: '/ai-generation', layout: 'site', nav: 'footer', labelKey: 'nav.aiGeneration', soon: true, load: async () => ({ default: (await import('../pages/site/info-pages.js')).aiPage }) }),
-  route({ path: '/solutions', layout: 'site', nav: 'footer', labelKey: 'nav.solutions', load: () => import('../pages/site/solutions.js') }),
+  route({ path: '/solutions', layout: 'site', nav: 'footer', section: '/services', labelKey: 'nav.solutions', load: () => import('../pages/site/solutions.js') }),
   route({ path: '/contact', layout: 'site', nav: 'footer', labelKey: 'nav.contact', load: () => import('../pages/site/contact.js') }),
   route({ path: '/brief', layout: 'site', labelKey: 'nav.brief', load: async () => ({ default: (await import('../pages/site/request.js')).briefPage }) }),
   route({ path: '/request-integration', layout: 'site', labelKey: 'nav.integrationRequest', load: async () => ({ default: (await import('../pages/site/request.js')).integrationRequestPage }) }),
@@ -48,7 +51,6 @@ export const routes = [
   /* ---------- Legacy paths (earlier builds) ---------- */
   { path: '/library', redirect: '/marketplace' },
   { path: '/pricing', redirect: '/packages' },
-  { path: '/services', redirect: '/custom' },
   { path: '/how-it-works', redirect: '/custom' },
   { path: '/create', redirect: '/app/create' },
   { path: '/playground', redirect: '/app/personality' },

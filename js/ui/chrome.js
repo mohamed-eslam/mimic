@@ -40,8 +40,7 @@ function siteHeader() {
       </nav>
       <div class="site-header__actions">
         ${prefs()}
-        <a class="btn btn--ghost" href="#/contact" data-path="/contact">${t('nav.contact')}</a>
-        <a class="btn btn--primary" href="#/brief">${t('cta.createCustom')}</a>
+        <a class="btn btn--primary btn--sm site-header__cta" href="#/brief">${t('cta.requestCharacter')}</a>
       </div>
       <button class="btn btn--secondary btn--icon menu-toggle" type="button" data-menu-open aria-controls="drawer" aria-expanded="false">
         ${icon('menu')}<span class="visually-hidden">${t('nav.menu')}</span>
@@ -63,7 +62,7 @@ function siteFooter() {
         ${logo({ size: 'footer', variant: 'on-dark', label: t('brand.homeLabel') })}
         <p>${t('footer.description')}</p>
       </div>
-      ${col(t('footer.product'), ['/marketplace', '/custom', '/packages', '/ai-generation'].map(find))}
+      ${col(t('footer.product'), ['/marketplace', '/services', '/custom', '/packages', '/ai-generation'].map(find))}
       ${col(t('footer.solutions'), ['/business', '/creators', '/integration', '/solutions'].map(find))}
       ${col(t('footer.company'), ['/contact', '/brief', '/request-integration'].map(find))}
       <div class="site-footer__col">
@@ -121,12 +120,10 @@ function drawerContent() {
     ? `<nav class="drawer-nav" aria-label="${t('nav.workspace')}">${appNavList('drawer-nav')}</nav>
        <a class="btn btn--secondary btn--block" href="#/">${t('nav.backToSite')}</a>`
     : `<nav class="drawer-nav" aria-label="${t('nav.primary')}">
-         <ul class="drawer-nav__list" role="list">${byNav('site').map((r) => `<li>${link(r, 'drawer-nav__link', r.label)}</li>`).join('')}</ul>
+         <ul class="drawer-nav__list" role="list">${byNav('site').map((r) => `<li>${link(r, 'drawer-nav__link', r.short)}</li>`).join('')}</ul>
        </nav>
        <div class="drawer__actions">
-         <a class="btn btn--primary btn--block btn--lg" href="#/brief">${t('cta.createCustom')}</a>
-         <a class="btn btn--secondary btn--block" href="#/request-integration">${t('cta.requestIntegration')}</a>
-         <a class="btn btn--ghost btn--block" href="#/contact">${t('cta.talkToTeam')}</a>
+         <a class="btn btn--primary btn--block btn--lg" href="#/brief">${t('cta.requestCharacter')}</a>
        </div>`;
   return `
     <div class="drawer__panel" role="dialog" aria-modal="true" aria-label="${t('nav.menu')}">
@@ -211,8 +208,9 @@ export function setRoute(route) {
   document.body.dataset.layout = layout;
   closeDrawer({ restoreFocus: false });
   qsa('[data-path]').forEach((a) => {
-    const active = a.dataset.path === route.path;
-    if (active) a.setAttribute('aria-current', 'page');
+    if (a.dataset.path === route.path) a.setAttribute('aria-current', 'page');
+    // Parent section in the primary nav (e.g. Services while on Custom Design)
+    else if (route.section && a.dataset.path === route.section && a.matches('.site-nav__link, .drawer-nav__link')) a.setAttribute('aria-current', 'true');
     else a.removeAttribute('aria-current');
   });
 }

@@ -6,17 +6,20 @@
 export const customBriefAr = {
   title: 'موجز الشخصية المخصصة',
   steps: {
-    who: { title: 'عرّفنا عليك', short: 'عنك', intro: 'لنسألك فقط عمّا يهمّك.' },
-    needs: { title: 'ما الذي تحتاجه؟', short: 'احتياجك' },
-    appearance: { title: 'شكل الشخصية', short: 'الشكل', intro: 'اختر الإطلالة التي تناسبك، أو اختر «اقترحوا الأنسب» إن أردت أن يقترح مصممونا عليك.' },
-    personality: { title: 'الشخصية وأسلوب الكلام', short: 'الأسلوب', intro: 'الشخصية واللغة واللهجة تختارها بشكل مستقل عن الشكل.' },
-    identity: { title: 'هويتك', short: 'الهوية' },
-    deliverables: { title: 'ما الذي تريد استلامه؟', short: 'المخرجات', intro: 'هذه طلبات مبدئية، وسيؤكّد فريقنا النطاق النهائي معك في العرض.' },
-    integration: { title: 'دمج الشخصية', short: 'الدمج' },
-    project: { title: 'تفاصيل المشروع والتواصل', short: 'التفاصيل' },
-    review: { title: 'راجع الموجز', short: 'المراجعة' },
+    style: { title: 'اختر أسلوب الشخصية', short: 'الأسلوب' },
+    purpose: { title: 'ما الغرض من الشخصية؟', short: 'الغرض' },
+    details: { title: 'التفاصيل الإبداعية', short: 'التفاصيل' },
+    review: { title: 'المراجعة والإرسال', short: 'المراجعة' },
   },
   questions: {
+    characterKind: {
+      label: 'أسلوب الشخصية', summaryLabel: 'أسلوب الشخصية',
+      options: { realistic: 'إنسان واقعي', humanlike: 'شبه بشري', cartoon3d: 'شخصية ثلاثية الأبعاد', open: 'اقترحوا الأنسب' },
+    },
+    secBrand: { label: 'علامتك التجارية' },
+    secAbout: { label: 'عنك' },
+    secProject: { label: 'مشروعك' },
+    secContact: { label: 'كيف نتواصل معك؟' },
     listingName: { label: 'الشخصية المختارة' },
     packageName: { label: 'الباقة' },
     who: {

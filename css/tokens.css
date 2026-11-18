@@ -17,141 +17,137 @@
 :root {
   color-scheme: light;
 
-  /* ---------- Brand core ---------- */
-  --brand-ink: #111827;
-  --brand-green: #146c43;
-  --brand-green-light: #76d5a1;
-  --brand-indigo: var(--brand-ink); /* legacy alias */
+  /* ==========================================================================
+     Monochrome system (light). Neutrals carry the interface; the characters,
+     images and videos carry the personality. Color appears only for meaning:
+     action emphasis (blue, opt-in), success, warning, error.
+     Contrast checked (WCAG AA): see docs/ACCESSIBILITY.md.
+     ========================================================================== */
 
-  /* ---------- Neutral ramp ---------- */
-  --ink-900: #111827;
-  --ink-800: #1f2937;
-  --ink-700: #374151;
-  --ink-500: #4b5563;
-  --ink-400: #6b7280;
-  --ink-300: #7c8c82;
-  --ink-200: #d4ddd7;
-  --ink-100: #e9eeea;
-  --ink-50:  #f3f6f4;
+  /* ---------- Neutral scale ---------- */
+  --n-0:   #ffffff;
+  --n-25:  #f8f8f7;  /* canvas */
+  --n-50:  #f0f0ee;  /* subtle surface */
+  --n-100: #e9e9e6;  /* hover surface */
+  --n-150: #e3e3e0;  /* border · selected surface */
+  --n-300: #c5c5c0;  /* muted (decorative only) */
+  --n-400: #8e8e88;  /* control boundary 3.3:1 on white */
+  --n-500: #6b6b66;  /* secondary text 4.7:1+ on canvas/subtle */
+  --n-700: #484844;  /* body text */
+  --n-800: #252523;  /* strong surface */
+  --n-900: #141413;  /* heading · primary action */
 
-  /* "indigo" = near-black green family */
-  --indigo-950: #060d09;
-  --indigo-900: #0b130e;
-  --indigo-800: #0f1a14;
-  --indigo-700: #1a2b22;
-  --indigo-600: #24392d;
-  --indigo-100: #e6eee9;
+  /* ---------- Semantic (from the brief) ---------- */
+  --color-canvas: var(--n-25);
+  --color-surface: var(--n-0);
+  --color-surface-subtle: var(--n-50);
+  --color-surface-hover: var(--n-100);
+  --color-surface-selected: var(--n-150);
+  --color-surface-strong: var(--n-800);
+  --color-text-primary: var(--n-900);
+  --color-text-body: var(--n-700);
+  --color-text-secondary: var(--n-500);
+  --color-border: var(--n-150);
+  --color-border-muted: var(--n-300);
+  --color-action-primary: var(--n-900);
+  --color-action-primary-hover: #2e2e2c;
+  --color-action-primary-text: #ffffff;
+  --color-action-accent: #2563eb;          /* opt-in emphasis only */
+  --color-success: #16805d;
+  --color-success-soft: #e7f3ee;
+  --color-warning: #b7791f;                /* icons / indicators (3:1+) */
+  --color-warning-text: #8a5a12;           /* warning TEXT (5.4:1) */
+  --color-warning-soft: #fbf4e6;
+  --color-error: #c43d3d;
+  --color-error-soft: #fbecec;
 
-  --cream-50:  #f8faf9;
-  --cream-100: #f1f5f2;
-  --white:     #ffffff;
+  /* ---------- Legacy names → mapped onto the neutral system ----------
+     Older components reference these; they now resolve to neutrals so no page
+     keeps a private palette. New code should use the semantic names above. */
+  --brand-ink: #141413;           /* FIXED dark ink in both themes (text on always-light surfaces) */
+  --brand-green: var(--n-900);
+  --brand-green-light: var(--n-300);
+  --brand-indigo: #141413;
+  --white: #ffffff;
+  --ink-900: var(--n-900); --ink-800: var(--n-800); --ink-700: var(--n-700); --ink-500: var(--n-500);
+  --ink-400: var(--n-500); --ink-300: var(--n-400); --ink-200: var(--n-150); --ink-100: var(--n-100); --ink-50: var(--n-50);
+  --indigo-950: #0a0a09; --indigo-900: #0f0f0e; /* both FIXED dark (were dark in both themes) */ --indigo-800: var(--n-800); --indigo-700: var(--n-700);
+  --indigo-600: var(--n-500); --indigo-100: var(--n-50);
+  --cream-50: var(--n-25); --cream-100: var(--n-50);
+  --lavender-50: var(--n-25); --lavender-100: var(--n-50); --lavender-200: var(--n-150); --lavender-300: var(--n-300);
+  --lavender-400: var(--n-400); --lavender-500: var(--n-500); --lavender-600: var(--n-900); --lavender-700: var(--n-800);
+  --peach-100: var(--n-50); --peach-200: var(--n-150); --peach-300: var(--n-300); --peach-500: var(--n-500); --peach-700: var(--n-700);
+  --mint-100: var(--color-success-soft); --mint-200: #cfe6dc; --mint-300: #8cc7a6; --mint-500: var(--color-success); --mint-700: var(--color-success);
+  --sky-100: var(--n-50); --sky-200: var(--n-150); --sky-300: var(--n-300); --sky-500: var(--n-500); --sky-700: var(--n-700);
+  --butter-100: var(--color-warning-soft); --butter-200: #f1dfb8; --butter-300: #e2c28a; --butter-500: var(--color-warning); --butter-700: var(--color-warning-text);
+  --pink-100: var(--color-error-soft); --pink-200: #f3d0d0; --pink-300: #e3a1a1; --pink-500: var(--color-error); --pink-700: var(--color-error);
 
-  /* "lavender" = green accent ramp */
-  --lavender-50:  #f0f7f3;
-  --lavender-100: #e3f1e9;
-  --lavender-200: #c7e3d3;
-  --lavender-300: #9ccdb2;
-  --lavender-400: #5fa982;
-  --lavender-500: #2e8a5b;
-  --lavender-600: #146c43;
-  --lavender-700: #0f5a37;
+  --color-bg: var(--color-canvas);
+  --color-bg-app: var(--n-50);
+  --color-bg-elevated: var(--color-surface);
+  --color-surface-muted: var(--color-surface-subtle);
+  --color-surface-sunken: var(--n-100);
+  --color-surface-inverse: var(--n-800);
+  --color-surface-inverse-deep: var(--n-900);
+  --color-border-strong: var(--n-300);
+  --color-border-control: var(--n-400);
 
-  /* "peach" = warm sand (secondary emphasis, "coming soon") */
-  --peach-100: #fbf1e2;
-  --peach-200: #f3ddbb;
-  --peach-300: #e3b97a;
-  --peach-500: #c9883a;
-  --peach-700: #7a4a0c;
-
-  /* "mint" = success green */
-  --mint-100: #e3f1e9;
-  --mint-200: #c7e3d3;
-  --mint-300: #8cc7a6;
-  --mint-500: #2e8a5b;
-  --mint-700: #146c43;
-
-  --sky-100: #e8f0f7; --sky-200: #cfdeec; --sky-300: #a7c1db; --sky-500: #4c7aa6; --sky-700: #2b5279;
-  --butter-100: #fbf4dc; --butter-200: #f3e3ad; --butter-300: #e2c773; --butter-500: #b8902a; --butter-700: #6e5208;
-  --pink-100: #fbeaea; --pink-200: #f3cfcf; --pink-300: #e3a1a1; --pink-500: #c0504d; --pink-700: #9b2c2c;
-
-  /* ---------- Semantic color ---------- */
-  --color-bg: #f8faf9;
-  --color-bg-app: #f1f5f2;
-  --color-bg-elevated: #ffffff;
-  --color-surface: #ffffff;
-  --color-surface-muted: #f3f6f4;
-  --color-surface-sunken: #eef2ef;
-  --color-surface-inverse: #0f1a14;
-  --color-surface-inverse-deep: #0b130e;
-  --color-border: #d4ddd7;
-  --color-border-strong: #a3b0a7;
-  --color-border-control: #7c8c82;
-
-  --color-text: #111827;
-  --color-text-muted: #4b5563;
-  --color-text-subtle: #5f6b63;
+  --color-text: var(--color-text-body);
+  --color-text-muted: var(--color-text-secondary);
+  --color-text-subtle: var(--color-text-secondary);
   --color-text-inverse: #ffffff;
-  --color-text-inverse-muted: #c5d3ca;
-  --color-heading: #111827;
+  --color-text-inverse-muted: #c9c9c4;
+  --color-heading: var(--color-text-primary);
 
-  --color-primary: #146c43;
-  --color-primary-hover: #0f5a37;
-  --color-primary-active: #0b4a2d;
-  --color-primary-contrast: #ffffff;
+  --color-primary: var(--color-action-primary);
+  --color-primary-hover: var(--color-action-primary-hover);
+  --color-primary-active: #000000;
+  --color-primary-contrast: var(--color-action-primary-text);
 
-  --color-accent: #146c43;
-  --color-accent-hover: #0f5a37;
-  --color-accent-soft: #e3f1e9;
-  --color-accent-softer: #f0f7f3;
+  /* "accent" = emphasis text/links/icons → ink, not a hue */
+  --color-accent: var(--n-900);
+  --color-accent-hover: var(--n-700);
+  --color-accent-soft: var(--color-surface-selected);
+  --color-accent-softer: var(--color-surface-subtle);
   --color-accent-contrast: #ffffff;
-  --color-accent-strong: #146c43;
-  --color-accent-strong-hover: #0f5a37;
+  --color-accent-strong: var(--n-800);
+  --color-accent-strong-hover: #333331;
 
-  --color-creative: #c9883a;
-  --color-creative-hover: #b4762c;
-  --color-creative-soft: #fbf1e2;
-  --color-creative-contrast: #111827;
+  --color-creative: var(--n-700);
+  --color-creative-hover: var(--n-800);
+  --color-creative-soft: var(--n-50);
+  --color-creative-contrast: #ffffff;
 
-  --color-success: #146c43;
-  --color-success-soft: #e3f1e9;
-  --color-warning: #6e5208;
-  --color-warning-soft: #fbf4dc;
-  --color-danger: #b42318;
-  --color-danger-soft: #fdecea;
+  --color-danger: var(--color-error);
+  --color-danger-soft: var(--color-error-soft);
 
-  --color-focus: #146c43;
-  --color-selected-bg: #e3f1e9;
-  --color-selected-border: #146c43;
+  --color-focus: var(--n-900);
+  --color-selected-bg: var(--color-surface-selected);
+  --color-selected-border: var(--n-900);
 
-  --color-header-bg: rgb(248 250 249 / 0.94);
-  --color-topbar-bg: rgb(241 245 242 / 0.95);
-  --color-toast-bg: #111827;
+  --color-header-bg: rgb(248 248 247 / 0.92);
+  --color-topbar-bg: rgb(240 240 238 / 0.94);
+  --color-toast-bg: var(--n-900);
   --color-toast-fg: #ffffff;
+  --color-backdrop: rgb(20 20 19 / 0.42);
+  --color-overlay-strong: rgb(20 20 19 / 0.68);  /* chips over media */
 
-  --logo-body: #111827;
-  --logo-face: #ffffff;
-  --logo-dot: #146c43;
-  --logo-dot-2: #76d5a1;
-  --logo-word: #111827;
-  --logo-accent: #146c43;
+  --logo-body: var(--n-900); --logo-face: #ffffff; --logo-dot: var(--n-900); --logo-dot-2: var(--n-500); --logo-word: var(--n-900); --logo-accent: var(--n-900);
 
-  --media-bg-a: #eef2ef;
-  --media-bg-b: #dfe6e1;
+  --media-bg-a: var(--n-50);
+  --media-bg-b: var(--n-150);
   --media-glow: rgb(255 255 255 / 0.9);
-  --media-ph-a: #cdd6d0;
-  --media-ph-b: #aab7ae;
-  --media-shadow: rgb(17 24 39 / 0.18);
+  --media-ph-a: #d6d6d2;
+  --media-ph-b: #b3b3ae;
+  --media-shadow: rgb(20 20 19 / 0.18);
+  --media-backdrop: #efefe6; /* the supplied studio portraits' own backdrop */
 
-  --tint-lavender: var(--lavender-100);
-  --tint-peach: var(--peach-100);
-  --tint-mint: var(--mint-100);
-  --tint-sky: var(--sky-100);
-  --tint-butter: var(--butter-100);
-  --tint-pink: var(--pink-100);
+  --tint-lavender: var(--n-50); --tint-peach: var(--n-50); --tint-mint: var(--n-50);
+  --tint-sky: var(--n-50); --tint-butter: var(--n-50); --tint-pink: var(--n-50);
 
   /* ---------- Typography ---------- */
   --font-latin: "Manrope", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  --font-arabic: "Alexandria", "Segoe UI", Tahoma, sans-serif;
+  --font-arabic: "IBM Plex Sans Arabic", "Segoe UI", Tahoma, sans-serif;
   --font-display: var(--font-latin);
   --font-body: var(--font-latin);
   --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
@@ -163,15 +159,15 @@
   --text-md: 1.125rem;
   --text-lg: 1.25rem;
   --text-xl: 1.5rem;
-  --text-2xl: clamp(1.625rem, 1.3rem + 1.1vw, 2.125rem);
-  --text-3xl: clamp(2rem, 1.45rem + 2.1vw, 3rem);
-  --text-display: clamp(2.5rem, 1.5rem + 4.2vw, 4.75rem);
+  --text-2xl: var(--fs-h2);      /* legacy aliases → role scale (no more oversized leftovers) */
+  --text-3xl: var(--fs-h1);
+  --text-display: var(--fs-hero);
 
   --weight-regular: 400;
   --weight-medium: 500;
   --weight-semibold: 600;
   --weight-bold: 700;
-  --weight-extrabold: 800;
+  --weight-extrabold: 700; /* 800 retired — capped at 700 */
 
   --leading-tight: 1.1;
   --leading-snug: 1.3;
@@ -182,28 +178,44 @@
   --tracking-wide: 0.06em;
 
   /* ---------- Typography scale (roles) — fluid between 360px and 1440px ----------
-     Applied to components in css/typography.css. Sizes grow only where hierarchy needs it. */
-  --fs-hero:    clamp(2.375rem, 1.6rem + 3.4vw, 4.5rem);     /* 38 → 72  hero headline        */
-  --fs-h1:      clamp(2.125rem, 1.6rem + 2.2vw, 3.25rem);    /* 34 → 52  inner page titles     */
-  --fs-h2:      clamp(1.625rem, 1.3rem + 1.6vw, 2.75rem);    /* 26 → 44  section headings      */
-  --fs-title:   clamp(1.375rem, 1.15rem + 0.9vw, 1.875rem);  /* 22 → 30  step / modal titles   */
-  --fs-h3:      clamp(1.125rem, 1rem + 0.6vw, 1.5rem);       /* 18 → 24  card titles           */
-  --fs-h4:      clamp(1.0625rem, 0.97rem + 0.4vw, 1.25rem);  /* 17 → 20  small card titles     */
-  --fs-lead:    clamp(1.0625rem, 0.98rem + 0.4vw, 1.25rem);  /* 17 → 20  intros & descriptions */
-  --fs-body:    clamp(1rem, 0.94rem + 0.28vw, 1.125rem);     /* 16 → 18  body text             */
-  --fs-body-sm: clamp(1rem, 0.97rem + 0.1vw, 1.0625rem);      /* 16 → 17  card text             */
-  --fs-ui:      1rem;                                         /* 16       nav, buttons, inputs  */
-  --fs-label:   0.875rem;                                     /* 14       labels, eyebrows      */
-  --fs-caption: 0.8125rem;                                    /* 13       badges, tags          */
+     ONE scale for every page, applied in css/typography.css. Hierarchy comes from weight
+     and spacing, not size. Arabic uses the same sizes with its own line heights/weights. */
+  --fs-hero:    clamp(1.875rem, 1.542rem + 1.48vw, 2.875rem); /* 30 → 46  homepage hero        */
+  --fs-h1:      clamp(1.625rem, 1.5rem + 0.56vw, 2rem);       /* 26 → 32  page headings        */
+  --fs-h2-base: clamp(1.4375rem, 1.333rem + 0.46vw, 1.75rem); /* 23 → 28  (unscaled copy for non-heading display text) */
+  --fs-h2:      var(--fs-h2-base);                            /* 23 → 28  section headings     */
+  --fs-title:   clamp(1.1875rem, 1.125rem + 0.28vw, 1.375rem); /* 19 → 22  dialog / step titles */
+  --fs-h3:      clamp(1.0625rem, 1.042rem + 0.09vw, 1.125rem); /* 17 → 18  card titles          */
+  --fs-h4:      1rem;                                         /* 16       small titles         */
+  --fs-lead:    clamp(1rem, 0.979rem + 0.09vw, 1.0625rem);    /* 16 → 17  intros               */
+  --fs-body:    clamp(0.9375rem, 0.917rem + 0.09vw, 1rem);    /* 15 → 16  body text            */
+  --fs-body-sm: 0.9375rem;                                    /* 15       card text            */
+  --fs-small:   0.875rem;                                     /* 14       descriptions, meta   */
+  --fs-ui:      0.875rem;                                     /* 14       nav, buttons (all sizes) */
+  --fs-ui-lg:   var(--fs-ui);                                 /* 14       kept as alias        */
+  --fs-input:   1rem;                                         /* 16       inputs (prevents iOS zoom) */
+  --fs-label:   0.8125rem;                                    /* 13       labels, filters, eyebrows */
+  --fs-caption: 0.75rem;                                      /* 12       badges, tags         */
 
-  --lh-hero: 1.08;
-  --lh-h1: 1.12;
-  --lh-h2: 1.15;
-  --lh-title: 1.2;
-  --lh-h3: 1.25;
+  /* Weights: 400 / 500 / 600 / 700 only */
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+  --fw-heading: 700;
+  --fw-display: 700;
+
+  --lh-hero: 1.12;
+  --lh-h1: 1.18;
+  --lh-h2: 1.22;
+  --lh-title: 1.3;
+  --lh-h3: 1.35;
   --lh-lead: 1.6;
   --lh-body: 1.65;
   --lh-ui: 1.35;
+
+  /* Readable measures */
+  --measure-hero: 18ch;
+  --measure-lead: 38rem;
 
   /* Vertical rhythm between heading → text → actions */
   --flow-eyebrow: var(--space-3);
@@ -213,18 +225,43 @@
   /* ---------- Spacing ---------- */
   --space-0: 0; --space-1: 0.25rem; --space-2: 0.5rem; --space-3: 0.75rem; --space-4: 1rem; --space-5: 1.25rem;
   --space-6: 1.5rem; --space-7: 2rem; --space-8: 2.5rem; --space-9: 3rem; --space-10: 4rem; --space-11: 5rem; --space-12: 6rem;
-  --section-y: clamp(4rem, 2.5rem + 6vw, 7rem);
+  --section-y: clamp(3.5rem, 2.75rem + 3.4vw, 6rem);
+
+  /* ---------- Component tokens (one visual language for every card/control) ---------- */
+  --radius-card: 20px;      /* cards, tiles                 */
+  --radius-panel: 24px;     /* large panels, dialogs        */
+  --radius-control: 12px;   /* inputs, selects, small boxes */
+  --card-pad: clamp(1.25rem, 1rem + 0.8vw, 1.5rem);
+  --grid-gap: clamp(1rem, 0.75rem + 1vw, 1.5rem);
+  --btn-h-sm: 36px;
+  --btn-h-md: 44px;
+  --btn-h-lg: 48px;
+  --btn-px-sm: 14px;
+  --btn-px-md: 18px;
+  --btn-px-lg: 22px;
+  --btn-icon: 16px;
+  /* Soft-surface choices (builder, filters): background, not strokes, carries state */
+  --choice-bg: var(--n-50);
+  --choice-bg-hover: var(--n-100);
+  --choice-selected: var(--n-150);
+  --choice-selected-fg: var(--n-900);
+  --choice-ink: var(--n-900);
+  --choice-muted: var(--n-500);
+  /* Breakpoints (reference — media queries can't read custom properties):
+     mobile < 720 · tablet 720–1099 · desktop ≥ 1100 · wide nav ≥ 1280 */
 
   /* ---------- Radius ---------- */
   --radius-xs: 6px; --radius-sm: 10px; --radius-md: 12px; --radius-lg: 16px; --radius-xl: 24px; --radius-2xl: 32px; --radius-pill: 999px;
 
   /* ---------- Elevation ---------- */
-  --shadow-xs: 0 1px 2px rgb(17 24 39 / 0.06);
-  --shadow-sm: 0 1px 2px rgb(17 24 39 / 0.05), 0 4px 12px rgb(17 24 39 / 0.05);
-  --shadow-md: 0 2px 4px rgb(17 24 39 / 0.04), 0 12px 32px rgb(17 24 39 / 0.08);
-  --shadow-lg: 0 4px 10px rgb(17 24 39 / 0.05), 0 28px 64px rgb(17 24 39 / 0.12);
+  --shadow-xs: 0 1px 2px rgb(20 20 19 / 0.06);
+  --shadow-sm: 0 1px 2px rgb(20 20 19 / 0.05), 0 4px 12px rgb(20 20 19 / 0.05);
+  --shadow-md: 0 2px 4px rgb(20 20 19 / 0.04), 0 12px 32px rgb(20 20 19 / 0.08);
+  --shadow-lg: 0 4px 10px rgb(20 20 19 / 0.05), 0 28px 64px rgb(20 20 19 / 0.12);
   --shadow-press: 0 2px 0 0 var(--indigo-950);
   --shadow-press-soft: 0 1px 0 0 var(--ink-200);
+  --card-shadow: 0 1px 2px rgb(20 20 19 / 0.05), 0 12px 32px -14px rgb(20 20 19 / 0.16);
+  --card-shadow-hover: 0 2px 4px rgb(20 20 19 / 0.06), 0 22px 44px -16px rgb(20 20 19 / 0.22);
   /* Focus ring for custom controls whose real input is visually hidden */
   --shadow-focus: 0 0 0 2px var(--color-bg), 0 0 0 5px var(--color-focus);
 
@@ -237,7 +274,7 @@
   /* ---------- Layout ---------- */
   --container: 1200px;
   --container-pad: clamp(1rem, 0.4rem + 2.6vw, 2rem);
-  --header-h: 72px;
+  --header-h: 68px;
   --sidebar-w: 276px;
   --sidebar-w-compact: 88px;
   --topbar-h: 64px;
@@ -246,149 +283,123 @@
   --gutter: var(--space-7);
   --control-h-sm: 36px;
   --control-h: 44px;
-  --control-h-lg: 52px;
+  --control-h-lg: 48px;
 
   --dir: 1;
   --z-base: 1; --z-sticky: 20; --z-nav: 40; --z-overlay: 60; --z-toast: 80;
 }
 
-/* ---------- Arabic typography (Alexandria needs more vertical room) ---------- */
+/* ---------- Arabic typography (IBM Plex Sans Arabic) ----------
+   Same size scale as English. Plex Arabic is compact with clear counters, so it needs
+   moderate (not Alexandria-level) line height, lighter heading weights and no tracking. */
 :root:lang(ar) {
   --font-display: var(--font-arabic);
   --font-body: var(--font-arabic);
   --tracking-tight: 0;
   --tracking-display: 0;
   --tracking-wide: 0;
-  --leading-tight: 1.4;
-  --leading-normal: 1.85;
-  --text-display: clamp(2.2rem, 1.4rem + 3.4vw, 3.9rem);
+  --leading-tight: 1.35;
+  --leading-normal: 1.75;
 
-  /* Alexandria is wide with tall ascenders: slightly smaller display sizes, more line height */
-  --fs-hero: clamp(2.25rem, 1.5rem + 3.1vw, 4.25rem);       /* 36 → 68 */
-  --fs-h1:   clamp(2rem, 1.5rem + 2vw, 3rem);               /* 32 → 48 */
+  /* Headings only: ~10–15% larger than English and Bold, so Arabic titles carry the same
+     presence (Plex Arabic sits visually smaller than Manrope at equal size). Body sizes untouched.
+     Fluid 360px → 1440px. 700 is the heaviest weight loaded (index.html). */
+  --fs-hero:  clamp(2.0625rem, 1.75rem + 1.389vw, 3rem);       /* 33 → 48  homepage hero   (EN 30 → 46) */
+  --fs-h1:    clamp(1.8125rem, 1.667rem + 0.648vw, 2.25rem);   /* 29 → 36  page headings   (EN 26 → 32) */
+  --fs-h2:    clamp(1.625rem, 1.5rem + 0.556vw, 2rem);         /* 26 → 32  section headings (EN 23 → 28) */
+  --fs-title: clamp(1.3125rem, 1.229rem + 0.37vw, 1.5625rem);  /* 21 → 25  dialog / step / card-pair titles (EN 19 → 22) */
+  --fs-h3:    clamp(1.1875rem, 1.146rem + 0.185vw, 1.3125rem); /* 19 → 21  card titles     (EN 17 → 18) */
+  --fs-h4:    1.0625rem;                                       /* 17       small titles    (EN 16) */
+
+  --fw-heading: 700;
+  --fw-display: 700;
+
   --lh-hero: 1.35;
-  --lh-h1: 1.4;
+  --lh-h1: 1.35;
   --lh-h2: 1.4;
   --lh-title: 1.45;
   --lh-h3: 1.5;
-  --lh-lead: 1.8;
-  --lh-body: 1.85;
-  --lh-ui: 1.5;
+  --lh-lead: 1.75;
+  --lh-body: 1.75;
+  --lh-ui: 1.4;
+  --measure-hero: 20ch; /* Arabic words are wider per character */
 }
 [dir="rtl"] { --dir: -1; }
 
 /* ==========================================================================
-   Dark theme — designed independently: deep green-black, elevated surfaces,
-   soft neutral text, light-green accent carrying dark text.
+   Dark theme — neutral (no green tint): warm near-black canvas, lifted surfaces,
+   light neutral primary action carrying dark text.
    ========================================================================== */
 :root[data-theme="dark"] {
   color-scheme: dark;
 
-  --ink-900: #f5f7f5;
-  --ink-800: #e3e9e5;
-  --ink-700: #ccd7d0;
-  --ink-500: #b7c5bb;
-  --ink-400: #93a499;
-  --ink-300: #6b8174;
-  --ink-200: #33433a;
-  --ink-100: #24312a;
-  --ink-50:  #1e2a24;
+  --n-0:   #1b1b19;  /* surface */
+  --n-25:  #111110;  /* canvas */
+  --n-50:  #252523;  /* subtle surface */
+  --n-100: #2e2e2b;  /* hover */
+  --n-150: #383835;  /* border */
+  --n-300: #4a4a46;
+  --n-400: #75756f;  /* control boundary 3.7:1 */
+  --n-500: #9a9a94;  /* muted text 5.4:1 on subtle */
+  --n-700: #d9d9d4;  /* body text */
+  --n-800: #e3e3e0;
+  --n-900: #f5f5f2;  /* primary text · primary action */
 
-  --indigo-950: #030604;
-  --indigo-900: #0a110d;
-  --indigo-800: #d7e6dc;
-  --indigo-700: #c2d6c9;
-  --indigo-600: #a9c4b2;
-  --indigo-100: #22312a;
+  --color-surface-selected: #3a3a37;
+  --color-text-body: #d9d9d4;
+  --color-text-secondary: #b0b0aa;
+  --color-action-primary-hover: #e3e3e0;
+  --color-action-primary-text: #141413;
+  --color-action-accent: #6b9bf5;
+  --color-success: #4cc59a;
+  --color-success-soft: #17302a;
+  --color-warning: #e5a64a;
+  --color-warning-text: #e5a64a;
+  --color-warning-soft: #2e2617;
+  --color-error: #f08a8a;
+  --color-error-soft: #361c1c;
 
-  --cream-50: #101713;
-  --cream-100: #0c120f;
+  --indigo-950: #000000;
+  --mint-200: #1f4a3a; --mint-300: #2f6b55;
+  --butter-200: #4a3a1c; --butter-300: #8a6a30;
+  --pink-200: #4e2727; --pink-300: #a25a5a;
 
-  --lavender-50:  #16241c;
-  --lavender-100: #1d3326;
-  --lavender-200: #275038;
-  --lavender-300: #3b7656;
-  --lavender-400: #56a57c;
-  --lavender-500: #76d5a1;
-  --lavender-600: #76d5a1;
-  --lavender-700: #9be3bb;
+  --color-surface-inverse: #252523;
+  --color-surface-inverse-deep: #0b0b0a;
+  --color-text-inverse-muted: #b0b0aa;
+  --color-primary-active: #ffffff;
+  --color-accent-strong: #2e2e2b;
+  --color-accent-strong-hover: #383835;
+  --color-creative-contrast: #141413;
+  --color-accent-contrast: #141413;
 
-  --peach-100: #2e2416; --peach-200: #4a3a1f; --peach-300: #b98f4f; --peach-500: #e2b06a; --peach-700: #f0cc94;
-  --mint-100: #1d3326; --mint-200: #275038; --mint-300: #3b7656; --mint-500: #76d5a1; --mint-700: #9be3bb;
-  --sky-100: #172431; --sky-200: #20364a; --sky-300: #3e6488; --sky-500: #7fa9d1; --sky-700: #b3cde6;
-  --butter-100: #2b2614; --butter-200: #46391a; --butter-300: #a88b3c; --butter-500: #d9bb64; --butter-700: #ecd796;
-  --pink-100: #331b1b; --pink-200: #4e2727; --pink-300: #a25a5a; --pink-500: #e08a87; --pink-700: #f3b2b0;
+  --color-header-bg: rgb(17 17 16 / 0.9);
+  --color-topbar-bg: rgb(17 17 16 / 0.94);
+  --color-toast-bg: #f5f5f2;
+  --color-toast-fg: #141413;
+  --color-backdrop: rgb(0 0 0 / 0.6);
 
-  --color-bg: #101713;
-  --color-bg-app: #0c120f;
-  --color-bg-elevated: #1b2520;
-  --color-surface: #1b2520;
-  --color-surface-muted: #212d27;
-  --color-surface-sunken: #141c18;
-  --color-surface-inverse: #1d3a2b;
-  --color-surface-inverse-deep: #080d0a;
-  --color-border: #33433a;
-  --color-border-strong: #4f6357;
-  --color-border-control: #6b8174;
+  --logo-face: #111110;
 
-  --color-text: #f5f7f5;
-  --color-text-muted: #b7c5bb;
-  --color-text-subtle: #a1b1a6;
-  --color-text-inverse-muted: #c9d7ce;
-  --color-heading: #f5f7f5;
-
-  --color-primary: #76d5a1;
-  --color-primary-hover: #8fe0b3;
-  --color-primary-active: #62c48e;
-  --color-primary-contrast: #0b1a12;
-
-  --color-accent: #76d5a1;
-  --color-accent-hover: #9be3bb;
-  --color-accent-soft: #1d3326;
-  --color-accent-softer: #16241c;
-  --color-accent-contrast: #0b1a12;
-  --color-accent-strong: #1f6b46;
-  --color-accent-strong-hover: #237a50;
-
-  --color-creative: #e2b06a;
-  --color-creative-hover: #ebc183;
-  --color-creative-soft: #2e2416;
-  --color-creative-contrast: #1a1206;
-
-  --color-success: #9be3bb;
-  --color-success-soft: #1d3326;
-  --color-warning: #ecd796;
-  --color-warning-soft: #2b2614;
-  --color-danger: #f3a7a2;
-  --color-danger-soft: #3a1d1b;
-  --color-focus: #9be3bb;
-  --color-selected-bg: #1d3326;
-  --color-selected-border: #76d5a1;
-
-  --color-header-bg: rgb(16 23 19 / 0.92);
-  --color-topbar-bg: rgb(12 18 15 / 0.94);
-  --color-toast-bg: #f5f7f5;
-  --color-toast-fg: #0b1a12;
-
-  --logo-body: #f5f7f5;
-  --logo-face: #101713;
-  --logo-dot: #76d5a1;
-  --logo-dot-2: #3b7656;
-  --logo-word: #f5f7f5;
-  --logo-accent: #76d5a1;
-
-  --media-bg-a: #22302a;
-  --media-bg-b: #18221d;
-  --media-glow: rgb(118 213 161 / 0.10);
-  --media-ph-a: #4a5d52;
-  --media-ph-b: #36463d;
+  --media-glow: rgb(255 255 255 / 0.05);
+  --media-ph-a: #4a4a46;
+  --media-ph-b: #383835;
   --media-shadow: rgb(0 0 0 / 0.5);
 
   --shadow-xs: 0 1px 2px rgb(0 0 0 / 0.3);
   --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.3), 0 4px 12px rgb(0 0 0 / 0.25);
   --shadow-md: 0 2px 4px rgb(0 0 0 / 0.3), 0 12px 32px rgb(0 0 0 / 0.35);
   --shadow-lg: 0 4px 10px rgb(0 0 0 / 0.35), 0 28px 64px rgb(0 0 0 / 0.45);
-  --shadow-press-soft: 0 1px 0 0 #050806;
+  --shadow-press-soft: 0 1px 0 0 #050505;
+  --card-shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 16px 40px -18px rgb(0 0 0 / 0.7);
+  --card-shadow-hover: 0 2px 4px rgb(0 0 0 / 0.4), 0 26px 52px -18px rgb(0 0 0 / 0.8);
+
+  --choice-bg: #252523;
+  --choice-bg-hover: #2e2e2b;
+  --choice-selected: #3a3a37;
+  --choice-selected-fg: #f5f5f2;
+  --choice-ink: #f5f5f2;
+  --choice-muted: #b0b0aa;
 }
 
 /* Smooth theme switch — only while switching (class added by js/ui/theme.js) */
