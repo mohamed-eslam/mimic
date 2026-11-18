@@ -49,9 +49,29 @@ filenames and are referenced explicitly via `media: photo('<file>')` in `js/data
 | Reem | `magnific_she-should-have-distinctive-natural-facial-features_tCi6G7vmZJ.png` |
 | Lina | `magnific_premium-photorealistic-aigenerated-egyptian_s7oBmBBl8e.png` |
 | Salma | `magnific_she-should-look_1lpDovir4r.png` |
-| Nour | — not supplied (light-blue blouse portrait expected) |
+| Nour | `magnific_premium-photorealistic-aigenerated-egyptian_u5nzVmXQLD.png` |
 
-Showcase-only (homepage product scenes, NOT marketplace listings — see `js/data/showcase.js`):
+## Talking-character videos (verified frame by frame, Nov 2026)
+Muted loops (5 s, 1280–1284×716, H.264) referenced as `media.video` in `js/data/catalog.js`;
+the portrait stays as poster + fallback. Played by `js/ui/character-video.js` (hover/focus on
+mouse devices, while visible on touch devices; never with reduced motion).
+
+| Character | Video |
+| --- | --- |
+| Faisal | `magnific_animate-the-exact-character_ksDqrda16B.mp4` |
+| Reem | `magnific_animate-the-exact-character_bxTQkJL5Y2.mp4` |
+| Salma | `magnific_animate-the-exact-character_If6XhiztvE.mp4` |
+| Milo | `magnific_video-generator_UPmsORHwny.mp4` |
+| Nour | `magnific_video-generator_Ebzv0qbuuO.mp4` |
+| Karim | `magnific_video-generator_cplz7IH0eP.mp4` |
+| Lina | `magnific_video-generator_huR8zyWvqL.mp4` |
+| Adam · Omar · Nova | — no video yet |
+
+Unmatched videos (kept, not used): `…animate-this-exact-character-portrait_WDsA3rucXe.mp4` (green robot
+mascot), `…video-generator_WDsGJMMcXe.mp4` (stylized 3D woman) — neither has a catalog entry.
+Note: filename IDs are NOT reliable for matching (e.g. `…bxTQkJL5Y2.mp4` is Reem, not Nova).
+
+Milo and Nova (now marketplace listings; also used in the homepage product scenes):
 
 | Character | File |
 | --- | --- |
